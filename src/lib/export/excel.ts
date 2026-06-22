@@ -2,38 +2,43 @@ import * as XLSX from 'xlsx';
 import { Attendee } from '@/types/attendee';
 import { Event } from '@/types/event';
 
-export function exportToExcel(event: Event, attendees: Attendee[]) {
-  const data = attendees.map(a => ({
+function prepareExportData(event: Event, attendees: Attendee[]) {
+  return attendees.map(a => ({
     'First Name': a.firstName,
     'Last Name': a.lastName,
     'Member ID': a.memberId || '',
+    'Role': a.role || '',
     'Attendance Status': a.status,
     'Event Name': event.name,
     'Event Date': event.date,
+    'Check-in Date': a.checkInDate || '',
+    'Check-out Date': a.checkOutDate || '',
+    'Service': a.service || '',
+    'Ordeal': a.ordeal ? 'Yes' : 'No',
+    'Brotherhood': a.brotherhood ? 'Yes' : 'No',
+    'Paid Amount': a.paidAmount || 0,
+    'Receipt Number': a.receiptNumber || '',
+    'Payment Method': a.paymentMethod || '',
+    'Paid In Full': a.paidInFull ? 'Yes' : 'No',
+    'Date Registered': a.dateRegistered || '',
+    'Date Paid': a.datePaid || '',
+    'Health Form': a.healthForm ? 'Yes' : 'No',
     'Notes': a.notes || '',
     'Is Walk-in': a.isWalkIn ? 'Yes' : 'No',
   }));
+}
 
+export function exportToExcel(event: Event, attendees: Attendee[]) {
+  const data = prepareExportData(event, attendees);
   const worksheet = XLSX.utils.json_to_sheet(data);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Attendees');
 
-  // Generate buffer and trigger download
   XLSX.writeFile(workbook, `${event.name.replace(/\s+/g, '_')}_attendance.xlsx`);
 }
 
 export function exportToCSV(event: Event, attendees: Attendee[]) {
-  const data = attendees.map(a => ({
-    'First Name': a.firstName,
-    'Last Name': a.lastName,
-    'Member ID': a.memberId || '',
-    'Attendance Status': a.status,
-    'Event Name': event.name,
-    'Event Date': event.date,
-    'Notes': a.notes || '',
-    'Is Walk-in': a.isWalkIn ? 'Yes' : 'No',
-  }));
-
+  const data = prepareExportData(event, attendees);
   const worksheet = XLSX.utils.json_to_sheet(data);
   const csvOutput = XLSX.utils.sheet_to_csv(worksheet);
 

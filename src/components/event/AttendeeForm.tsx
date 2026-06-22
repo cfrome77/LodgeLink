@@ -3,7 +3,8 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AttendeeSchema, AttendeeFormValues } from '@/lib/validation/schemas';
-import { X, Save } from 'lucide-react';
+import { X, Save, User, CreditCard, ClipboardCheck, Clock } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface AttendeeFormProps {
   eventId: number;
@@ -29,101 +30,186 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
       notes: initialData?.notes || '',
       isWalkIn: initialData?.isWalkIn || false,
       isImported: initialData?.isImported || false,
+      role: initialData?.role || '',
+      checkInDate: initialData?.checkInDate || '',
+      checkOutDate: initialData?.checkOutDate || '',
+      service: initialData?.service || '',
+      ordeal: initialData?.ordeal || false,
+      brotherhood: initialData?.brotherhood || false,
+      paidAmount: initialData?.paidAmount || 0,
+      receiptNumber: initialData?.receiptNumber || '',
+      paymentMethod: initialData?.paymentMethod || '',
+      paidInFull: initialData?.paidInFull || false,
+      dateRegistered: initialData?.dateRegistered || '',
+      datePaid: initialData?.datePaid || '',
+      healthForm: initialData?.healthForm || false,
     },
   });
 
+  const sectionLabelClass = "flex items-center gap-2 text-xs font-black text-gray-400 uppercase tracking-widest mb-4 mt-2";
+  const inputClass = "w-full px-4 py-3 border-2 border-gray-100 rounded-xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-600 transition-all text-sm font-bold";
+  const labelClass = "block text-xs font-bold text-gray-500 mb-1 ml-1";
+  const checkboxContainerClass = "flex items-center gap-3 p-4 border-2 border-gray-50 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer";
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
-        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50">
-          <h2 className="text-lg font-bold text-gray-900">{title}</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 transition-colors">
-            <X size={20} />
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
+        <div className="flex justify-between items-center px-8 py-6 border-b border-gray-100 bg-gray-50/50">
+          <h2 className="text-2xl font-black text-gray-900 tracking-tight">{title}</h2>
+          <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+            <X size={24} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">First Name *</label>
-              <input
-                {...register('firstName')}
-                id="firstName"
-                className={`w-full px-3 py-2 border rounded-md outline-none focus:ring-2 focus:ring-blue-500 ${errors.firstName ? 'border-red-500' : 'border-gray-300'}`}
-              />
-              {errors.firstName && <p className="text-xs text-red-600 mt-1">{errors.firstName.message}</p>}
+        <form onSubmit={handleSubmit(onSubmit)} className="overflow-y-auto flex-1 p-8 space-y-8 scrollbar-hide">
+          {/* Personal Info */}
+          <section>
+            <div className={sectionLabelClass}>
+              <User size={14} />
+              <span>Personal Information</span>
             </div>
-            <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">Last Name *</label>
-              <input
-                {...register('lastName')}
-                id="lastName"
-                className={`w-full px-3 py-2 border rounded-md outline-none focus:ring-2 focus:ring-blue-500 ${errors.lastName ? 'border-red-500' : 'border-gray-300'}`}
-              />
-              {errors.lastName && <p className="text-xs text-red-600 mt-1">{errors.lastName.message}</p>}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className={labelClass}>First Name *</label>
+                <input {...register('firstName')} className={cn(inputClass, errors.firstName && "border-red-500 bg-red-50")} />
+              </div>
+              <div>
+                <label className={labelClass}>Last Name *</label>
+                <input {...register('lastName')} className={cn(inputClass, errors.lastName && "border-red-500 bg-red-50")} />
+              </div>
+              <div>
+                <label className={labelClass}>Member ID</label>
+                <input {...register('memberId')} className={inputClass} />
+              </div>
+              <div>
+                <label className={labelClass}>Role</label>
+                <input {...register('role')} className={inputClass} placeholder="e.g. Youth, Adult, Staff" />
+              </div>
             </div>
-          </div>
+          </section>
 
-          <div>
-            <label htmlFor="memberId" className="block text-sm font-medium text-gray-700 mb-1">Member ID (Optional)</label>
-            <input
-              {...register('memberId')}
-              id="memberId"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="LodgeMaster ID"
-            />
-          </div>
+          {/* Logistics & Participation */}
+          <section>
+            <div className={sectionLabelClass}>
+              <ClipboardCheck size={14} />
+              <span>Participation & Status</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className={labelClass}>Attendance Status</label>
+                <select {...register('status')} className={inputClass}>
+                  <option value="absent">Absent</option>
+                  <option value="present">Present</option>
+                  <option value="partial">Partial</option>
+                </select>
+              </div>
+              <div>
+                <label className={labelClass}>Service</label>
+                <input {...register('service')} className={inputClass} placeholder="e.g. Chapter, Kitchen" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4">
+              <label className={checkboxContainerClass}>
+                <input type="checkbox" {...register('ordeal')} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                <span className="text-sm font-bold text-gray-700">Ordeal</span>
+              </label>
+              <label className={checkboxContainerClass}>
+                <input type="checkbox" {...register('brotherhood')} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                <span className="text-sm font-bold text-gray-700">Brotherhood</span>
+              </label>
+              <label className={checkboxContainerClass}>
+                <input type="checkbox" {...register('healthForm')} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                <span className="text-sm font-bold text-gray-700">Health Form</span>
+              </label>
+            </div>
+          </section>
 
-          <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">Attendance Status</label>
-            <select
-              {...register('status')}
-              id="status"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="absent">Absent</option>
-              <option value="present">Present</option>
-              <option value="partial">Partial</option>
-            </select>
-          </div>
+          {/* Payment Info */}
+          <section>
+            <div className={sectionLabelClass}>
+              <CreditCard size={14} />
+              <span>Payment Details</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className={labelClass}>Paid Amount ($)</label>
+                <input type="number" step="0.01" {...register('paidAmount')} className={inputClass} />
+              </div>
+              <div>
+                <label className={labelClass}>Payment Method</label>
+                <input {...register('paymentMethod')} className={inputClass} placeholder="e.g. Cash, Card, Online" />
+              </div>
+              <div>
+                <label className={labelClass}>Receipt Number</label>
+                <input {...register('receiptNumber')} className={inputClass} />
+              </div>
+              <div className="flex items-end">
+                <label className={cn(checkboxContainerClass, "w-full")}>
+                  <input type="checkbox" {...register('paidInFull')} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                  <span className="text-sm font-bold text-gray-700">Paid In Full</span>
+                </label>
+              </div>
+            </div>
+          </section>
 
-          <div>
-            <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">Notes (Optional)</label>
+          {/* Dates & Times */}
+          <section>
+            <div className={sectionLabelClass}>
+              <Clock size={14} />
+              <span>Timestamps</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className={labelClass}>Check-in Time</label>
+                <input type="datetime-local" {...register('checkInDate')} className={inputClass} />
+              </div>
+              <div>
+                <label className={labelClass}>Check-out Time</label>
+                <input type="datetime-local" {...register('checkOutDate')} className={inputClass} />
+              </div>
+              <div>
+                <label className={labelClass}>Date Registered</label>
+                <input type="date" {...register('dateRegistered')} className={inputClass} />
+              </div>
+              <div>
+                <label className={labelClass}>Date Paid</label>
+                <input type="date" {...register('datePaid')} className={inputClass} />
+              </div>
+            </div>
+          </section>
+
+          {/* Notes */}
+          <section>
+            <label className={labelClass}>Event Notes</label>
             <textarea
               {...register('notes')}
-              id="notes"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500"
-              rows={2}
+              className={cn(inputClass, "h-24 resize-none")}
+              placeholder="Additional comments..."
             />
-          </div>
+          </section>
 
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="isWalkIn"
-              {...register('isWalkIn')}
-              className="rounded text-blue-600 focus:ring-blue-500"
-            />
-            <label htmlFor="isWalkIn" className="text-sm text-gray-700">Mark as Walk-in</label>
-          </div>
-
-          <div className="pt-4 border-t border-gray-100 flex justify-end gap-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-semibold transition-colors"
-            >
-              <Save size={18} />
-              Save Attendee
-            </button>
+          <div className="flex items-center gap-3">
+            <input type="checkbox" id="isWalkIn" {...register('isWalkIn')} className="rounded text-blue-600" />
+            <label htmlFor="isWalkIn" className="text-sm font-bold text-gray-700">Mark as Walk-in</label>
           </div>
         </form>
+
+        <div className="p-8 border-t border-gray-100 bg-gray-50/50 flex justify-end gap-4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-6 py-4 text-gray-500 font-black uppercase tracking-widest text-sm hover:text-gray-700 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSubmit(onSubmit)}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-black shadow-lg shadow-blue-200 active:scale-95 transition-all"
+          >
+            <Save size={20} />
+            Save Attendee
+          </button>
+        </div>
       </div>
     </div>
   );

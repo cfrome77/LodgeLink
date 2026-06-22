@@ -2,7 +2,7 @@
 
 import { Attendee } from '@/types/attendee';
 import { db } from '@/lib/storage/db';
-import { Edit2, Trash2, UserPlus, Search, UserCheck } from 'lucide-react';
+import { Edit2, Trash2, UserPlus, Search, UserCheck, ShieldCheck, CreditCard } from 'lucide-react';
 import { useState } from 'react';
 import AttendeeForm from './AttendeeForm';
 
@@ -40,83 +40,83 @@ export default function AttendeeList({ eventId, attendees }: AttendeeListProps) 
           <input
             type="text"
             placeholder="Search attendees..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+            className="w-full pl-10 pr-4 py-2 border-2 border-gray-100 rounded-xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-600 transition-all font-bold"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <button
           onClick={() => setIsAdding(true)}
-          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors"
+          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl font-black transition-all shadow-md active:scale-95"
         >
           <UserPlus size={20} />
           <span>Add Attendee</span>
         </button>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-white border-2 border-gray-100 rounded-2xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Member ID</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Type</th>
-                <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Name</th>
+                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Role / ID</th>
+                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
+                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Flags</th>
+                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-100">
               {filteredAttendees.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500 italic">
+                  <td colSpan={5} className="px-6 py-12 text-center text-gray-400 font-bold italic">
                     No attendees found.
                   </td>
                 </tr>
               ) : (
                 filteredAttendees.map((attendee) => (
-                  <tr key={attendee.id} className="hover:bg-gray-50 transition-colors group">
+                  <tr key={attendee.id} className="hover:bg-gray-50/50 transition-colors group">
                     <td className="px-6 py-4">
-                      <div className="font-medium text-gray-900">{attendee.firstName} {attendee.lastName}</div>
-                      {attendee.notes && <div className="text-xs text-gray-500 truncate max-w-[200px]">{attendee.notes}</div>}
+                      <div className="font-bold text-gray-900">{attendee.firstName} {attendee.lastName}</div>
+                      {attendee.isWalkIn && <span className="text-[9px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full font-black uppercase tracking-wider">Walk-in</span>}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-600 font-mono">
-                      {attendee.memberId || '-'}
+                    <td className="px-6 py-4">
+                      <div className="text-xs font-black text-blue-600 uppercase tracking-tighter">{attendee.role || '-'}</div>
+                      <div className="text-[10px] text-gray-400 font-mono">{attendee.memberId || '-'}</div>
                     </td>
                     <td className="px-6 py-4">
                       <button
                         onClick={() => handleStatusToggle(attendee)}
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition-colors ${
+                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-black uppercase tracking-wider transition-all ${
                           attendee.status === 'present'
                             ? 'bg-green-100 text-green-700 hover:bg-green-200'
                             : attendee.status === 'partial'
-                            ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            ? 'bg-amber-100 text-amber-700 hover:bg-amber-200'
+                            : 'bg-red-100 text-red-700 hover:bg-red-200'
                         }`}
                       >
                         <UserCheck size={14} />
-                        {attendee.status.charAt(0).toUpperCase() + attendee.status.slice(1)}
+                        {attendee.status}
                       </button>
                     </td>
                     <td className="px-6 py-4">
-                      {attendee.isWalkIn ? (
-                        <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-medium">Walk-in</span>
-                      ) : (
-                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">Imported</span>
-                      )}
+                      <div className="flex gap-1.5">
+                        {attendee.paidInFull ? <CreditCard size={16} className="text-green-500" /> : <CreditCard size={16} className="text-red-300" />}
+                        {attendee.healthForm && <ShieldCheck size={16} className="text-blue-500" />}
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">
                         <button
                           onClick={() => setEditingAttendee(attendee)}
-                          className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors"
+                          className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
                           title="Edit"
                         >
                           <Edit2 size={18} />
                         </button>
                         <button
                           onClick={() => handleDelete(attendee.id!)}
-                          className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"
+                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
                           title="Delete"
                         >
                           <Trash2 size={18} />
