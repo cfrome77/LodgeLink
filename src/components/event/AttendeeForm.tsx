@@ -133,7 +133,12 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className={labelClass}>Paid Amount ($)</label>
-                <input type="number" step="0.01" {...register('paidAmount')} className={inputClass} />
+                <input
+                  type="number"
+                  step="0.01"
+                  {...register('paidAmount', { valueAsNumber: true })}
+                  className={inputClass}
+                />
               </div>
               <div>
                 <label className={labelClass}>Payment Method</label>

@@ -1,35 +1,48 @@
 import * as XLSX from 'xlsx';
 import { Attendee } from '@/types/attendee';
 import { Event } from '@/types/event';
+import { ExportColumn } from './presets';
 
-function prepareExportData(event: Event, attendees: Attendee[]) {
-  return attendees.map(a => ({
-    'First Name': a.firstName,
-    'Last Name': a.lastName,
-    'Member ID': a.memberId || '',
-    'Role': a.role || '',
-    'Attendance Status': a.status,
-    'Event Name': event.name,
-    'Event Date': event.date,
-    'Check-in Date': a.checkInDate || '',
-    'Check-out Date': a.checkOutDate || '',
-    'Service': a.service || '',
-    'Ordeal': a.ordeal ? 'Yes' : 'No',
-    'Brotherhood': a.brotherhood ? 'Yes' : 'No',
-    'Paid Amount': a.paidAmount || 0,
-    'Receipt Number': a.receiptNumber || '',
-    'Payment Method': a.paymentMethod || '',
-    'Paid In Full': a.paidInFull ? 'Yes' : 'No',
-    'Date Registered': a.dateRegistered || '',
-    'Date Paid': a.datePaid || '',
-    'Health Form': a.healthForm ? 'Yes' : 'No',
-    'Notes': a.notes || '',
-    'Is Walk-in': a.isWalkIn ? 'Yes' : 'No',
-  }));
+function formatValue(key: string, value: any): string | number {
+  if (value === undefined || value === null) return '';
+
+  if (typeof value === 'boolean') {
+    // If the key suggests (T/F), use T/F
+    if (key.includes('(T/F)') || key.includes('(T)')) {
+      return value ? 'T' : 'F';
+    }
+    return value ? 'Yes' : 'No';
+  }
+
+  return value;
 }
 
-export function exportToExcel(event: Event, attendees: Attendee[]) {
-  const data = prepareExportData(event, attendees);
+function prepareExportData(event: Event, attendees: Attendee[], columns: ExportColumn[]) {
+  return attendees.map(a => {
+    const row: Record<string, string | number> = {};
+
+    columns.forEach(col => {
+      let value: any;
+
+      if (col.key === 'fullName') {
+        value = `${a.lastName}, ${a.firstName}`;
+      } else if (col.key === 'eventName') {
+        value = event.name;
+      } else if (col.key === 'eventDate') {
+        value = event.date;
+      } else {
+        value = (a as any)[col.key];
+      }
+
+      row[col.header] = formatValue(col.header, value);
+    });
+
+    return row;
+  });
+}
+
+export function exportToExcel(event: Event, attendees: Attendee[], columns: ExportColumn[]) {
+  const data = prepareExportData(event, attendees, columns);
   const worksheet = XLSX.utils.json_to_sheet(data);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Attendees');
@@ -37,8 +50,8 @@ export function exportToExcel(event: Event, attendees: Attendee[]) {
   XLSX.writeFile(workbook, `${event.name.replace(/\s+/g, '_')}_attendance.xlsx`);
 }
 
-export function exportToCSV(event: Event, attendees: Attendee[]) {
-  const data = prepareExportData(event, attendees);
+export function exportToCSV(event: Event, attendees: Attendee[], columns: ExportColumn[]) {
+  const data = prepareExportData(event, attendees, columns);
   const worksheet = XLSX.utils.json_to_sheet(data);
   const csvOutput = XLSX.utils.sheet_to_csv(worksheet);
 

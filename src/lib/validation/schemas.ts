@@ -21,15 +21,15 @@ export const AttendeeSchema = z.object({
   checkInDate: z.string().optional().or(z.literal('')),
   checkOutDate: z.string().optional().or(z.literal('')),
   service: z.string().optional().or(z.literal('')),
-  ordeal: z.boolean().default(false),
-  brotherhood: z.boolean().default(false),
-  paidAmount: z.coerce.number().default(0),
+  ordeal: z.boolean(),
+  brotherhood: z.boolean(),
+  paidAmount: z.number(),
   receiptNumber: z.string().optional().or(z.literal('')),
   paymentMethod: z.string().optional().or(z.literal('')),
-  paidInFull: z.boolean().default(false),
+  paidInFull: z.boolean(),
   dateRegistered: z.string().optional().or(z.literal('')),
   datePaid: z.string().optional().or(z.literal('')),
-  healthForm: z.boolean().default(false),
+  healthForm: z.boolean(),
 });
 
 export type EventFormValues = z.infer<typeof EventSchema>;

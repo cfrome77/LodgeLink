@@ -21,7 +21,7 @@ import CheckInMode from '@/components/event/CheckInMode';
 import ReconciliationView from '@/components/event/ReconciliationView';
 import ReconciliationPanel from '@/components/event/ReconciliationPanel';
 import EventHeader from '@/components/event/EventHeader';
-import { exportToExcel, exportToCSV } from '@/lib/export/excel';
+import ExportModal from '@/components/event/ExportModal';
 
 type Tab = 'checkin' | 'attendees' | 'import' | 'reconciliation';
 
@@ -31,6 +31,7 @@ export default function EventDetailPage() {
   const eventId = Number(params.eventId);
 
   const [activeTab, setActiveTab] = useState<Tab>('checkin');
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   const event = useLiveQuery(() => db.events.get(eventId), [eventId]);
   const attendees = useLiveQuery(() => db.attendees.where('eventId').equals(eventId).toArray(), [eventId]);
@@ -52,16 +53,6 @@ export default function EventDetailPage() {
       });
       router.push('/');
     }
-  };
-
-  const handleExportExcel = () => {
-    if (!attendees) return;
-    exportToExcel(event, attendees);
-  };
-
-  const handleExportCSV = () => {
-    if (!attendees) return;
-    exportToCSV(event, attendees);
   };
 
   const tabs = [
@@ -136,18 +127,11 @@ export default function EventDetailPage() {
               <h3 className="text-lg font-black text-gray-900 mb-4 uppercase tracking-wider text-center">Actions</h3>
               <div className="grid gap-3">
                 <button
-                  onClick={handleExportExcel}
-                  className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-4 rounded-xl font-black transition-all shadow-md active:scale-95"
+                  onClick={() => setIsExportModalOpen(true)}
+                  className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-4 rounded-xl font-black transition-all shadow-md active:scale-95"
                 >
                   <Download size={20} />
-                  Excel (LodgeMaster)
-                </button>
-                <button
-                  onClick={handleExportCSV}
-                  className="flex items-center justify-center gap-2 border-2 border-gray-200 hover:border-blue-600 hover:text-blue-600 text-gray-600 px-6 py-4 rounded-xl font-black transition-all active:scale-95"
-                >
-                  <Download size={20} />
-                  CSV Backup
+                  Export Data
                 </button>
                 <button
                   onClick={handleDeleteEvent}
@@ -178,6 +162,15 @@ export default function EventDetailPage() {
           </button>
         ))}
       </nav>
+
+      {event && attendees && (
+        <ExportModal
+          event={event}
+          attendees={attendees}
+          isOpen={isExportModalOpen}
+          onClose={() => setIsExportModalOpen(false)}
+        />
+      )}
     </div>
   );
 }
