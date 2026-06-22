@@ -5,18 +5,13 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/storage/db';
 import { useState } from 'react';
 import {
-  ArrowLeft,
   Users,
   Upload,
   CheckSquare,
   BarChart3,
   Download,
   Trash2,
-  Calendar,
-  MapPin
 } from 'lucide-react';
-import Link from 'next/link';
-import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
 // Components
@@ -24,17 +19,18 @@ import AttendeeList from '@/components/event/AttendeeList';
 import CSVImporter from '@/components/event/CSVImporter';
 import CheckInMode from '@/components/event/CheckInMode';
 import ReconciliationView from '@/components/event/ReconciliationView';
+import ReconciliationPanel from '@/components/event/ReconciliationPanel';
+import EventHeader from '@/components/event/EventHeader';
 import { exportToExcel, exportToCSV } from '@/lib/export/excel';
 
-type Tab = 'attendees' | 'import' | 'checkin' | 'reconciliation';
+type Tab = 'checkin' | 'attendees' | 'import' | 'reconciliation';
 
 export default function EventDetailPage() {
   const params = useParams();
   const router = useRouter();
   const eventId = Number(params.eventId);
 
-  const [activeTab, setActiveTab] = useState<Tab>('attendees');
-  const [isExporting, setIsExporting] = useState(false);
+  const [activeTab, setActiveTab] = useState<Tab>('checkin');
 
   const event = useLiveQuery(() => db.events.get(eventId), [eventId]);
   const attendees = useLiveQuery(() => db.attendees.where('eventId').equals(eventId).toArray(), [eventId]);
@@ -69,125 +65,119 @@ export default function EventDetailPage() {
   };
 
   const tabs = [
-    { id: 'attendees', label: 'Attendees', icon: Users },
-    { id: 'import', label: 'Black Pug Import', icon: Upload },
-    { id: 'checkin', label: 'Live Check-in', icon: CheckSquare },
-    { id: 'reconciliation', label: 'Reconciliation', icon: BarChart3 },
+    { id: 'checkin', label: 'Check-in', icon: CheckSquare },
+    { id: 'attendees', label: 'List', icon: Users },
+    { id: 'import', label: 'Import', icon: Upload },
+    { id: 'reconciliation', label: 'Stats', icon: BarChart3 },
   ];
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-        <div className="space-y-1">
-          <Link
-            href="/"
-            className="inline-flex items-center text-sm text-gray-500 hover:text-blue-600 transition-colors mb-2"
-          >
-            <ArrowLeft size={16} className="mr-1" />
-            Back to Dashboard
-          </Link>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">{event.name}</h1>
-          <div className="flex flex-wrap items-center gap-4 text-gray-600">
-            <div className="flex items-center gap-1.5 bg-white px-3 py-1 rounded-full border border-gray-200 text-sm">
-              <Calendar size={14} className="text-blue-600" />
-              <span>{format(new Date(event.date), 'PPPP')}</span>
+    <div className="min-h-screen bg-zinc-50 flex flex-col">
+      <EventHeader event={event} totalAttendees={attendees?.length || 0} />
+
+      <main className="container mx-auto px-4 py-6 flex-1">
+        <div className="grid lg:grid-cols-12 gap-8 items-start">
+          {/* Main Content Area */}
+          <div className="lg:col-span-8 space-y-6 col-span-full">
+            {/* Desktop Tabs - Hidden on mobile as it has bottom nav or top sticky search */}
+            <div className="hidden sm:flex items-center gap-1 bg-white p-1 rounded-2xl border-2 border-gray-100 w-fit mb-6">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as Tab)}
+                  className={cn(
+                    "flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black transition-all",
+                    activeTab === tab.id
+                      ? "bg-blue-600 text-white shadow-md shadow-blue-200"
+                      : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
+                  )}
+                >
+                  <tab.icon size={18} />
+                  {tab.label}
+                </button>
+              ))}
             </div>
-            {event.chapter && (
-              <div className="flex items-center gap-1.5 bg-white px-3 py-1 rounded-full border border-gray-200 text-sm">
-                <MapPin size={14} className="text-blue-600" />
-                <span>{event.chapter}</span>
-              </div>
-            )}
-            <div className="flex items-center gap-1.5 bg-white px-3 py-1 rounded-full border border-gray-200 text-sm">
-              <Users size={14} className="text-blue-600" />
-              <span>{attendees?.length || 0} Total</span>
+
+            {/* Content Area */}
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              {activeTab === 'checkin' && (
+                <CheckInMode eventId={eventId} attendees={attendees || []} />
+              )}
+
+              {activeTab === 'attendees' && (
+                <div className="bg-white p-6 rounded-3xl border-2 border-gray-100 shadow-sm">
+                  <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-2xl font-black text-gray-900 tracking-tight">Attendee List</h2>
+                  </div>
+                  <AttendeeList eventId={eventId} attendees={attendees || []} />
+                </div>
+              )}
+
+              {activeTab === 'import' && (
+                <div className="max-w-2xl mx-auto">
+                  <CSVImporter eventId={eventId} />
+                </div>
+              )}
+
+              {activeTab === 'reconciliation' && (
+                <ReconciliationView attendees={attendees || []} />
+              )}
             </div>
           </div>
-        </div>
 
-        <div className="flex flex-wrap gap-2">
-          <div className="relative group">
-            <button
-              onClick={() => setIsExporting(!isExporting)}
-              className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-bold transition-colors shadow-sm"
-            >
-              <Download size={20} />
-              <span>Export</span>
-            </button>
-            {isExporting && (
-              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-xl z-20 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+          {/* Sidebar - Desktop Only */}
+          <aside className="hidden lg:block lg:col-span-4 space-y-6 sticky top-32">
+            <div className="bg-white p-6 rounded-3xl border-2 border-gray-100 shadow-sm">
+              <h3 className="text-lg font-black text-gray-900 mb-6 uppercase tracking-wider text-center">Summary</h3>
+              <ReconciliationPanel attendees={attendees || []} />
+            </div>
+
+            <div className="bg-white p-6 rounded-3xl border-2 border-gray-100 shadow-sm">
+              <h3 className="text-lg font-black text-gray-900 mb-4 uppercase tracking-wider text-center">Actions</h3>
+              <div className="grid gap-3">
                 <button
-                  onClick={() => { handleExportExcel(); setIsExporting(false); }}
-                  className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 flex items-center gap-3 transition-colors"
+                  onClick={handleExportExcel}
+                  className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-4 rounded-xl font-black transition-all shadow-md active:scale-95"
                 >
-                  <div className="bg-green-100 p-1.5 rounded-md text-green-700">
-                    <Download size={16} />
-                  </div>
-                  <span>Excel (LodgeMaster)</span>
+                  <Download size={20} />
+                  Excel (LodgeMaster)
                 </button>
                 <button
-                  onClick={() => { handleExportCSV(); setIsExporting(false); }}
-                  className="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 flex items-center gap-3 transition-colors border-t border-gray-100"
+                  onClick={handleExportCSV}
+                  className="flex items-center justify-center gap-2 border-2 border-gray-200 hover:border-blue-600 hover:text-blue-600 text-gray-600 px-6 py-4 rounded-xl font-black transition-all active:scale-95"
                 >
-                  <div className="bg-blue-100 p-1.5 rounded-md text-blue-700">
-                    <Download size={16} />
-                  </div>
-                  <span>CSV Backup</span>
+                  <Download size={20} />
+                  CSV Backup
+                </button>
+                <button
+                  onClick={handleDeleteEvent}
+                  className="flex items-center justify-center gap-2 border-2 border-red-100 hover:bg-red-50 text-red-600 px-6 py-4 rounded-xl font-black transition-all active:scale-95"
+                >
+                  <Trash2 size={20} />
+                  Delete Event
                 </button>
               </div>
-            )}
-          </div>
-
-          <button
-            onClick={handleDeleteEvent}
-            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-            title="Delete Event"
-          >
-            <Trash2 size={24} />
-          </button>
+            </div>
+          </aside>
         </div>
-      </div>
+      </main>
 
-      {/* Tabs */}
-      <div className="flex border-b border-gray-200 mb-8 overflow-x-auto scrollbar-hide">
+      {/* Mobile Bottom Navigation */}
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-3 z-30 flex justify-around items-center pb-safe-area">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as Tab)}
             className={cn(
-              "flex items-center gap-2 px-6 py-4 text-sm font-bold border-b-2 transition-all whitespace-nowrap",
-              activeTab === tab.id
-                ? "border-blue-600 text-blue-600 bg-blue-50/30"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+              "flex flex-col items-center gap-1 p-2 rounded-xl transition-all",
+              activeTab === tab.id ? "text-blue-600 scale-110" : "text-gray-400"
             )}
           >
-            <tab.icon size={18} />
-            {tab.label}
+            <tab.icon size={24} strokeWidth={activeTab === tab.id ? 2.5 : 2} />
+            <span className="text-[10px] font-black uppercase tracking-wider">{tab.label}</span>
           </button>
         ))}
-      </div>
-
-      {/* Content Area */}
-      <div className="min-h-[50vh] animate-in fade-in slide-in-from-bottom-2 duration-300">
-        {activeTab === 'attendees' && (
-          <AttendeeList eventId={eventId} attendees={attendees || []} />
-        )}
-
-        {activeTab === 'import' && (
-          <div className="max-w-2xl mx-auto">
-            <CSVImporter eventId={eventId} />
-          </div>
-        )}
-
-        {activeTab === 'checkin' && (
-          <CheckInMode eventId={eventId} attendees={attendees || []} />
-        )}
-
-        {activeTab === 'reconciliation' && (
-          <ReconciliationView attendees={attendees || []} />
-        )}
-      </div>
+      </nav>
     </div>
   );
 }

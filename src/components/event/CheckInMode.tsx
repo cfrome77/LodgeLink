@@ -2,9 +2,10 @@
 
 import { Attendee } from '@/types/attendee';
 import { db } from '@/lib/storage/db';
-import { Search, UserCheck, UserX, UserMinus, UserPlus } from 'lucide-react';
-import { useState } from 'react';
-import AttendeeForm from './AttendeeForm';
+import { Search, UserPlus, X } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import AttendeeCard from './AttendeeCard';
+import WalkinModal from './WalkinModal';
 
 interface CheckInModeProps {
   eventId: number;
@@ -15,113 +16,92 @@ export default function CheckInMode({ eventId, attendees }: CheckInModeProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddingWalkIn, setIsAddingWalkIn] = useState(false);
 
-  const filteredAttendees = attendees.filter(a =>
-    `${a.firstName} ${a.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    a.memberId?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredAttendees = useMemo(() => {
+    return attendees.filter(a =>
+      `${a.firstName} ${a.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      a.memberId?.toLowerCase().includes(searchTerm.toLowerCase())
+    ).sort((a, b) => {
+      // Sort: Checked-in at bottom, or keep alphabetical?
+      // Alphabetical is usually better for finding names.
+      return a.lastName.localeCompare(b.lastName) || a.firstName.localeCompare(b.firstName);
+    });
+  }, [attendees, searchTerm]);
 
-  const handleStatusUpdate = async (id: number, status: Attendee['status']) => {
-    await db.attendees.update(id, { status });
+  const handleToggleStatus = async (attendee: Attendee) => {
+    // Fast interaction: Toggle between absent and present
+    const newStatus = attendee.status === 'present' ? 'absent' : 'present';
+
+    // Optimistic update via Dexie is already handled by useLiveQuery in parent
+    await db.attendees.update(attendee.id!, { status: newStatus });
+  };
+
+  const handleMarkAbsent = async (id: number) => {
+    await db.attendees.update(id, { status: 'absent' });
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between gap-4 sticky top-0 bg-zinc-50/80 backdrop-blur-md py-4 z-10">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={24} />
+    <div className="relative pb-24 min-h-full">
+      {/* Search Header - Pinned at top of content area */}
+      <div className="sticky top-0 sm:top-24 z-20 bg-zinc-50/95 backdrop-blur-sm pt-2 pb-4 px-1">
+        <div className="relative group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition-colors" size={24} />
           <input
             type="text"
-            placeholder="Search for check-in (Name or ID)..."
-            className="w-full pl-12 pr-4 py-4 text-xl border border-gray-300 rounded-xl outline-none focus:ring-4 focus:ring-blue-100 transition-all shadow-sm"
+            placeholder="Find attendee..."
+            className="w-full pl-12 pr-12 py-5 text-xl font-bold bg-white border-2 border-gray-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-600 transition-all shadow-sm"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             autoFocus
           />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
+            >
+              <X size={24} />
+            </button>
+          )}
         </div>
-        <button
-          onClick={() => setIsAddingWalkIn(true)}
-          className="inline-flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-4 rounded-xl font-bold transition-colors shadow-sm"
-        >
-          <UserPlus size={24} />
-          <span>Walk-in</span>
-        </button>
       </div>
 
-      <div className="grid gap-4">
+      {/* Attendee List */}
+      <div className="grid gap-3 mt-2 px-1">
         {filteredAttendees.length === 0 ? (
-          <div className="text-center py-20 bg-white border border-gray-200 rounded-2xl">
-            <p className="text-gray-500 text-xl font-medium">No one found matching "{searchTerm}"</p>
+          <div className="text-center py-24 bg-white border-2 border-dashed border-gray-200 rounded-3xl">
+            <p className="text-gray-400 text-lg font-bold">No results for "{searchTerm}"</p>
             <button
               onClick={() => setIsAddingWalkIn(true)}
-              className="mt-4 text-purple-600 font-bold hover:underline"
+              className="mt-4 bg-blue-50 text-blue-700 px-6 py-3 rounded-xl font-black uppercase tracking-wider text-sm hover:bg-blue-100 transition-colors"
             >
-              Add as a walk-in attendee?
+              Add as a walk-in
             </button>
           </div>
         ) : (
           filteredAttendees.map((attendee) => (
-            <div
+            <AttendeeCard
               key={attendee.id}
-              className={`flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-white border rounded-2xl shadow-sm transition-all ${
-                attendee.status === 'present' ? 'border-green-500 bg-green-50/30' : 'border-gray-200'
-              }`}
-            >
-              <div className="mb-4 sm:mb-0">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-2xl font-bold text-gray-900">{attendee.firstName} {attendee.lastName}</h3>
-                  {attendee.isWalkIn && (
-                    <span className="bg-purple-100 text-purple-700 text-xs px-2 py-0.5 rounded-full font-bold uppercase">Walk-in</span>
-                  )}
-                </div>
-                <p className="text-gray-500 font-mono">{attendee.memberId || 'No ID'}</p>
-                {attendee.notes && <p className="text-sm text-gray-400 mt-1 italic">"{attendee.notes}"</p>}
-              </div>
-
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleStatusUpdate(attendee.id!, 'present')}
-                  className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${
-                    attendee.status === 'present'
-                      ? 'bg-green-600 text-white ring-4 ring-green-100'
-                      : 'bg-gray-100 text-gray-600 hover:bg-green-100 hover:text-green-700'
-                  }`}
-                >
-                  <UserCheck size={20} />
-                  <span>Present</span>
-                </button>
-                <button
-                  onClick={() => handleStatusUpdate(attendee.id!, 'partial')}
-                  className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${
-                    attendee.status === 'partial'
-                      ? 'bg-yellow-500 text-white ring-4 ring-yellow-100'
-                      : 'bg-gray-100 text-gray-600 hover:bg-yellow-100 hover:text-yellow-700'
-                  }`}
-                >
-                  <UserMinus size={20} />
-                  <span>Partial</span>
-                </button>
-                <button
-                  onClick={() => handleStatusUpdate(attendee.id!, 'absent')}
-                  className={`flex items-center justify-center p-3 rounded-xl font-bold transition-all ${
-                    attendee.status === 'absent'
-                      ? 'bg-gray-300 text-gray-700'
-                      : 'bg-gray-100 text-gray-400 hover:bg-red-100 hover:text-red-600'
-                  }`}
-                  title="Mark Absent"
-                >
-                  <UserX size={20} />
-                </button>
-              </div>
-            </div>
+              attendee={attendee}
+              onToggleStatus={() => handleToggleStatus(attendee)}
+              onLongPress={() => handleMarkAbsent(attendee.id!)}
+            />
           ))
         )}
       </div>
 
+      {/* Floating Action Button (FAB) */}
+      <div className="fixed bottom-6 right-6 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-40">
+        <button
+          onClick={() => setIsAddingWalkIn(true)}
+          className="flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-5 rounded-full font-black text-lg transition-all shadow-2xl active:scale-95 shadow-blue-500/40"
+        >
+          <UserPlus size={28} />
+          <span className="sm:inline">Add Walk-in</span>
+        </button>
+      </div>
+
       {isAddingWalkIn && (
-        <AttendeeForm
+        <WalkinModal
           eventId={eventId}
-          title="Add Walk-in Attendee"
-          initialData={{ isWalkIn: true, status: 'present' }}
           onClose={() => setIsAddingWalkIn(false)}
           onSubmit={async (data) => {
             await db.attendees.add(data);
