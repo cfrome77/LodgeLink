@@ -25,6 +25,7 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
       eventId,
       firstName: initialData?.firstName || '',
       lastName: initialData?.lastName || '',
+      middleName: initialData?.middleName || '',
       memberId: initialData?.memberId || '',
       status: initialData?.status || 'absent',
       notes: initialData?.notes || '',
@@ -61,7 +62,7 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="overflow-y-auto flex-1 p-8 space-y-8 scrollbar-hide">
+        <form onSubmit={handleSubmit(onSubmit)} className="overflow-y-auto flex-1 p-8 space-y-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {/* Personal Info */}
           <section>
             <div className={sectionLabelClass}>
@@ -70,20 +71,24 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className={labelClass}>First Name *</label>
-                <input {...register('firstName')} className={cn(inputClass, errors.firstName && "border-red-500 bg-red-50")} />
+                <label htmlFor="firstName" className={labelClass}>First Name *</label>
+                <input id="firstName" {...register('firstName')} className={cn(inputClass, errors.firstName && "border-red-500 bg-red-50")} />
               </div>
               <div>
-                <label className={labelClass}>Last Name *</label>
-                <input {...register('lastName')} className={cn(inputClass, errors.lastName && "border-red-500 bg-red-50")} />
+                <label htmlFor="middleName" className={labelClass}>Middle Name</label>
+                <input id="middleName" {...register('middleName')} className={inputClass} />
               </div>
               <div>
-                <label className={labelClass}>Member ID</label>
-                <input {...register('memberId')} className={inputClass} />
+                <label htmlFor="lastName" className={labelClass}>Last Name *</label>
+                <input id="lastName" {...register('lastName')} className={cn(inputClass, errors.lastName && "border-red-500 bg-red-50")} />
               </div>
               <div>
-                <label className={labelClass}>Role</label>
-                <input {...register('role')} className={inputClass} placeholder="e.g. Youth, Adult, Staff" />
+                <label htmlFor="memberId" className={labelClass}>Member ID</label>
+                <input id="memberId" {...register('memberId')} className={inputClass} />
+              </div>
+              <div>
+                <label htmlFor="role" className={labelClass}>Role</label>
+                <input id="role" {...register('role')} className={inputClass} placeholder="e.g. Youth, Adult, Staff" />
               </div>
             </div>
           </section>

@@ -5,6 +5,7 @@ export interface Attendee {
   eventId: number;
   firstName: string;
   lastName: string;
+  middleName?: string;
   memberId?: string;
   status: AttendanceStatus;
   notes?: string;

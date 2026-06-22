@@ -9,6 +9,7 @@ export const EventSchema = z.object({
 export const AttendeeSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
+  middleName: z.string().optional().or(z.literal('')),
   memberId: z.string().optional().or(z.literal('')),
   status: z.enum(['present', 'partial', 'absent']),
   notes: z.string().optional().or(z.literal('')),

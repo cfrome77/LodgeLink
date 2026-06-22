@@ -90,7 +90,7 @@ export default function EventDetailPage() {
             </div>
 
             {/* Content Area */}
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
               {activeTab === 'checkin' && (
                 <CheckInMode eventId={eventId} attendees={attendees || []} />
               )}

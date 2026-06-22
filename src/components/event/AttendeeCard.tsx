@@ -38,7 +38,7 @@ export default function AttendeeCard({ attendee, onToggleStatus, onLongPress }: 
               "text-xl font-black truncate",
               isPresent ? "text-green-900" : isPartial ? "text-amber-900" : isAbsent ? "text-red-900" : "text-gray-900"
             )}>
-              {attendee.firstName} {attendee.lastName}
+              {attendee.firstName} {attendee.middleName ? `${attendee.middleName} ` : ''}{attendee.lastName}
             </h3>
             {attendee.isWalkIn && (
               <span className="bg-blue-600 text-white text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider">

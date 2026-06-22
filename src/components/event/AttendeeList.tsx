@@ -17,7 +17,7 @@ export default function AttendeeList({ eventId, attendees }: AttendeeListProps) 
   const [editingAttendee, setEditingAttendee] = useState<Attendee | null>(null);
 
   const filteredAttendees = attendees.filter(a =>
-    `${a.firstName} ${a.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    `${a.firstName} ${a.middleName || ''} ${a.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
     a.memberId?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -77,7 +77,7 @@ export default function AttendeeList({ eventId, attendees }: AttendeeListProps) 
                 filteredAttendees.map((attendee) => (
                   <tr key={attendee.id} className="hover:bg-gray-50/50 transition-colors group">
                     <td className="px-6 py-4">
-                      <div className="font-bold text-gray-900">{attendee.firstName} {attendee.lastName}</div>
+                      <div className="font-bold text-gray-900">{attendee.firstName} {attendee.middleName ? `${attendee.middleName} ` : ''}{attendee.lastName}</div>
                       {attendee.isWalkIn && <span className="text-[9px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full font-black uppercase tracking-wider">Walk-in</span>}
                     </td>
                     <td className="px-6 py-4">

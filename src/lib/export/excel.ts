@@ -25,7 +25,8 @@ function prepareExportData(event: Event, attendees: Attendee[], columns: ExportC
       let value: any;
 
       if (col.key === 'fullName') {
-        value = `${a.lastName}, ${a.firstName}`;
+        const middle = a.middleName ? ` ${a.middleName}` : '';
+        value = `${a.lastName}, ${a.firstName}${middle}`;
       } else if (col.key === 'eventName') {
         value = event.name;
       } else if (col.key === 'eventDate') {

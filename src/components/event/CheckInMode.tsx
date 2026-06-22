@@ -28,14 +28,20 @@ export default function CheckInMode({ eventId, attendees }: CheckInModeProps) {
   }, [attendees, searchTerm]);
 
   const handleToggleStatus = async (attendee: Attendee) => {
-    // Fast interaction: Toggle between absent and present
-    const newStatus = attendee.status === 'present' ? 'absent' : 'present';
+    // Fast interaction cycle: absent -> present -> partial -> absent
+    let newStatus: Attendee['status'];
+    if (attendee.status === 'absent') newStatus = 'present';
+    else if (attendee.status === 'present') newStatus = 'partial';
+    else newStatus = 'absent';
 
-    // Optimistic update via Dexie is already handled by useLiveQuery in parent
-    await db.attendees.update(attendee.id!, { status: newStatus });
+    await db.attendees.update(attendee.id!, {
+      status: newStatus,
+      // Auto-set check-in date if moving to present/partial and it's empty
+      ...(newStatus !== 'absent' && !attendee.checkInDate ? { checkInDate: new Date().toISOString().slice(0, 16) } : {})
+    });
   };
 
-  const handleMarkAbsent = async (id: number) => {
+  const handleQuickReset = async (id: number) => {
     await db.attendees.update(id, { status: 'absent' });
   };
 
@@ -82,7 +88,7 @@ export default function CheckInMode({ eventId, attendees }: CheckInModeProps) {
               key={attendee.id}
               attendee={attendee}
               onToggleStatus={() => handleToggleStatus(attendee)}
-              onLongPress={() => handleMarkAbsent(attendee.id!)}
+              onLongPress={() => handleQuickReset(attendee.id!)}
             />
           ))
         )}
