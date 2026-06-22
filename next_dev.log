@@ -1,0 +1,17 @@
+
+> temp-app@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.9 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+✓ Ready in 543ms
+
+○ Compiling / ...
+ HEAD / 200 in 4.3s (next.js: 4.0s, application-code: 390ms)
+ GET / 200 in 131ms (next.js: 16ms, application-code: 115ms)
+ GET /events/new 200 in 2.0s (next.js: 1942ms, application-code: 94ms)
+ GET /events/1 200 in 3.4s (next.js: 3.3s, application-code: 47ms)
+ GET / 200 in 59ms (next.js: 4ms, application-code: 55ms)
+ GET /events/new 200 in 43ms (next.js: 8ms, application-code: 35ms)
+ GET /events/1 200 in 87ms (next.js: 45ms, application-code: 42ms)
