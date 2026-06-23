@@ -7,7 +7,14 @@ function formatValue(key: string, value: any): string | number {
   if (value === undefined || value === null) return '';
 
   if (typeof value === 'boolean') {
-    // If the key suggests (T/F), use T/F
+    // If it's Ordeal, Brotherhood, Health Form, or Paid in Full,
+    // LodgeMaster often expects True/False or T/F.
+    // Given the previous requirement for Yes/No as default, we check for specific headers.
+    const k = key.toLowerCase();
+    if (k.includes('ordeal') || k.includes('brotherhood') || k.includes('health') || k.includes('paid in full')) {
+      return value ? 'True' : 'False';
+    }
+
     if (key.includes('(T/F)') || key.includes('(T)')) {
       return value ? 'T' : 'F';
     }
