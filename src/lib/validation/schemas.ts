@@ -10,8 +10,10 @@ export const AttendeeSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
   middleName: z.string().optional().or(z.literal('')),
-  memberId: z.string().optional().or(z.literal('')),
-  status: z.enum(['present', 'partial', 'absent']),
+  memberId: z.string().min(1, 'Member ID is required'),
+  status: z.enum(['present', 'partial', 'absent'], {
+    errorMap: () => ({ message: 'Attendance status is required' })
+  }),
   notes: z.string().optional().or(z.literal('')),
   isWalkIn: z.boolean(),
   isImported: z.boolean(),
@@ -19,8 +21,8 @@ export const AttendeeSchema = z.object({
 
   // New Fields
   role: z.string().optional().or(z.literal('')),
-  checkInDate: z.string().optional().or(z.literal('')),
-  checkOutDate: z.string().optional().or(z.literal('')),
+  checkInDate: z.string().min(1, 'Check-in time is required'),
+  checkOutDate: z.string().min(1, 'Check-out time is required'),
   service: z.number().optional(),
   ordeal: z.boolean(),
   brotherhood: z.boolean(),

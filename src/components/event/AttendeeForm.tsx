@@ -110,8 +110,9 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
                 <input id="lastName" {...register('lastName')} className={cn(inputClass, errors.lastName && "border-red-500 bg-red-50")} />
               </div>
               <div>
-                <label htmlFor="memberId" className={labelClass}>Member ID</label>
-                <input id="memberId" {...register('memberId')} className={inputClass} />
+                <label htmlFor="memberId" className={labelClass}>Member ID *</label>
+                <input id="memberId" {...register('memberId')} className={cn(inputClass, errors.memberId && "border-red-500 bg-red-50")} />
+                {errors.memberId && <p className="mt-1 text-[10px] font-bold text-red-600 ml-1 uppercase">{errors.memberId.message}</p>}
               </div>
               <div className="relative group">
                 <label htmlFor="role" className={labelClass}>Role</label>
@@ -137,12 +138,13 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className={labelClass}>Attendance Status</label>
-                <select {...register('status')} className={inputClass}>
+                <label className={labelClass}>Attendance Status *</label>
+                <select {...register('status')} className={cn(inputClass, errors.status && "border-red-500 bg-red-50")}>
                   <option value="absent">Absent</option>
                   <option value="present">Present</option>
                   <option value="partial">Partial</option>
                 </select>
+                {errors.status && <p className="mt-1 text-[10px] font-bold text-red-600 ml-1 uppercase">{errors.status.message}</p>}
               </div>
               <div>
                 <label htmlFor="service" className={labelClass}>Service (Hours)</label>
@@ -229,12 +231,14 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className={labelClass}>Check-in Time</label>
-                <input type="datetime-local" {...register('checkInDate')} className={inputClass} />
+                <label className={labelClass}>Check-in Time *</label>
+                <input type="datetime-local" {...register('checkInDate')} className={cn(inputClass, errors.checkInDate && "border-red-500 bg-red-50")} />
+                {errors.checkInDate && <p className="mt-1 text-[10px] font-bold text-red-600 ml-1 uppercase">{errors.checkInDate.message}</p>}
               </div>
               <div>
-                <label className={labelClass}>Check-out Time</label>
-                <input type="datetime-local" {...register('checkOutDate')} className={inputClass} />
+                <label className={labelClass}>Check-out Time *</label>
+                <input type="datetime-local" {...register('checkOutDate')} className={cn(inputClass, errors.checkOutDate && "border-red-500 bg-red-50")} />
+                {errors.checkOutDate && <p className="mt-1 text-[10px] font-bold text-red-600 ml-1 uppercase">{errors.checkOutDate.message}</p>}
               </div>
               <div>
                 <label className={labelClass}>Date Registered</label>
