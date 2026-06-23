@@ -3,7 +3,7 @@ import { Attendee } from '@/types/attendee';
 import { Event } from '@/types/event';
 import { ExportColumn } from './presets';
 
-function formatValue(key: string, value: any): string | number {
+function formatValue(key: string, value: string | number | boolean | undefined | null): string | number {
   if (value === undefined || value === null) return '';
 
   if (typeof value === 'boolean') {
@@ -29,7 +29,7 @@ function prepareExportData(event: Event, attendees: Attendee[], columns: ExportC
     const row: Record<string, string | number> = {};
 
     columns.forEach(col => {
-      let value: any;
+      let value: string | number | boolean | undefined | null;
 
       if (col.key === 'fullName') {
         const middle = a.middleName ? ` ${a.middleName}` : '';
@@ -39,7 +39,7 @@ function prepareExportData(event: Event, attendees: Attendee[], columns: ExportC
       } else if (col.key === 'eventDate') {
         value = event.date;
       } else {
-        value = (a as any)[col.key];
+        value = a[col.key as keyof Attendee];
       }
 
       row[col.header] = formatValue(col.header, value);

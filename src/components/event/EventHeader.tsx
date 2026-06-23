@@ -37,7 +37,7 @@ export default function EventHeader({ event, totalAttendees }: EventHeaderProps)
           <div className="flex items-center gap-4">
             <Link
               href="/"
-              className="p-2 -ml-2 text-gray-400 hover:text-blue-600 transition-colors"
+            className="p-2 -ml-2 text-gray-400 hover:text-scout-green transition-colors"
             >
               <ArrowLeft size={24} />
             </Link>
@@ -48,7 +48,7 @@ export default function EventHeader({ event, totalAttendees }: EventHeaderProps)
                 </h1>
                 <button
                   onClick={() => setIsEditing(true)}
-                className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                className="p-2 text-gray-400 hover:text-scout-green hover:bg-khaki rounded-lg transition-all"
                   title="Edit Event"
                 >
                 <Settings size={20} />
@@ -56,16 +56,16 @@ export default function EventHeader({ event, totalAttendees }: EventHeaderProps)
               </div>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm font-bold text-gray-500">
                 <div className="flex items-center gap-1">
-                  <Calendar size={14} className="text-blue-600" />
+                <Calendar size={14} className="text-scout-green" />
                   <span>{format(new Date(event.date), 'MMM d, yyyy')}</span>
                 </div>
                 {event.chapter && (
                   <div className="flex items-center gap-1">
-                    <MapPin size={14} className="text-blue-600" />
+                  <MapPin size={14} className="text-scout-green" />
                     <span>{event.chapter}</span>
                   </div>
                 )}
-                <div className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full text-[10px] uppercase font-black tracking-widest">
+              <div className="bg-khaki text-scout-green-dark px-2 py-0.5 rounded-full text-[10px] uppercase font-black tracking-widest border border-khaki-dark/20">
                   {totalAttendees} Total
                 </div>
               </div>

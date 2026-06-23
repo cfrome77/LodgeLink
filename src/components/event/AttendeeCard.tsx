@@ -41,7 +41,7 @@ export default function AttendeeCard({ attendee, onToggleStatus, onLongPress }: 
               {attendee.firstName} {attendee.middleName ? `${attendee.middleName} ` : ''}{attendee.lastName}
             </h3>
             {attendee.isWalkIn && (
-              <span className="bg-blue-600 text-white text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider">
+              <span className="bg-scout-green text-white text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider">
                 Walk-in
               </span>
             )}
@@ -51,7 +51,7 @@ export default function AttendeeCard({ attendee, onToggleStatus, onLongPress }: 
               {attendee.memberId || 'NO ID'}
             </p>
             {attendee.role && (
-              <span className="text-xs font-black text-blue-600 uppercase tracking-widest">
+              <span className="text-xs font-black text-scout-green uppercase tracking-widest">
                 {attendee.role}
               </span>
             )}
@@ -83,13 +83,13 @@ export default function AttendeeCard({ attendee, onToggleStatus, onLongPress }: 
         )}
 
         {attendee.healthForm && (
-          <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-tighter text-blue-700 bg-blue-100 px-2 py-0.5 rounded-md">
+          <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-tighter text-scout-green-dark bg-khaki px-2 py-0.5 rounded-md border border-khaki-dark/30">
             <ShieldCheck size={10} /> Health Form
           </span>
         )}
 
         {(attendee.ordeal || attendee.brotherhood) && (
-          <span className="text-[9px] font-black uppercase tracking-tighter text-purple-700 bg-purple-100 px-2 py-0.5 rounded-md">
+          <span className="text-[9px] font-black uppercase tracking-tighter text-white bg-oa-red px-2 py-0.5 rounded-md shadow-sm">
             {attendee.ordeal ? 'Ordeal' : 'Brotherhood'}
           </span>
         )}

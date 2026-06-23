@@ -52,8 +52,8 @@ export default function EventForm({ initialData, onSubmit, onCancel, title, isSu
               type="text"
               id="name"
               placeholder="e.g. Spring Conclave 2024"
-              className={`w-full px-5 py-4 bg-white border-2 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 transition-all font-bold ${
-                errors.name ? 'border-red-200 bg-red-50 focus:border-red-500' : 'border-gray-100 focus:border-blue-600'
+              className={`w-full px-5 py-4 bg-white border-2 rounded-2xl outline-none focus:ring-4 focus:ring-scout-green/10 transition-all font-bold ${
+                errors.name ? 'border-red-200 bg-red-50 focus:border-red-500' : 'border-gray-100 focus:border-scout-green'
               }`}
             />
             {errors.name && (
@@ -69,8 +69,8 @@ export default function EventForm({ initialData, onSubmit, onCancel, title, isSu
               {...register('date')}
               type="date"
               id="date"
-              className={`w-full px-5 py-4 bg-white border-2 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 transition-all font-bold ${
-                errors.date ? 'border-red-200 bg-red-50 focus:border-red-500' : 'border-gray-100 focus:border-blue-600'
+              className={`w-full px-5 py-4 bg-white border-2 rounded-2xl outline-none focus:ring-4 focus:ring-scout-green/10 transition-all font-bold ${
+                errors.date ? 'border-red-200 bg-red-50 focus:border-red-500' : 'border-gray-100 focus:border-scout-green'
               }`}
             />
             {errors.date && (
@@ -87,7 +87,7 @@ export default function EventForm({ initialData, onSubmit, onCancel, title, isSu
               type="text"
               id="chapter"
               placeholder="e.g. Kittatinny"
-              className="w-full px-5 py-4 bg-white border-2 border-gray-100 rounded-2xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-600 transition-all font-bold"
+              className="w-full px-5 py-4 bg-white border-2 border-gray-100 rounded-2xl outline-none focus:ring-4 focus:ring-scout-green/10 focus:border-scout-green transition-all font-bold"
             />
           </div>
         </div>
@@ -105,7 +105,7 @@ export default function EventForm({ initialData, onSubmit, onCancel, title, isSu
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex items-center gap-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-8 py-4 rounded-2xl transition-all font-black uppercase tracking-widest text-sm shadow-lg shadow-blue-200 active:scale-95"
+            className="flex items-center gap-3 bg-scout-green hover:bg-scout-green-dark disabled:bg-scout-green/40 text-white px-8 py-4 rounded-2xl transition-all font-black uppercase tracking-widest text-sm shadow-lg shadow-scout-green/20 active:scale-95"
           >
             {isSubmitting ? (
               <>

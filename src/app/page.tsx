@@ -18,22 +18,22 @@ export default function Home() {
         </div>
         <Link
           href="/events/new"
-          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors"
+          className="inline-flex items-center gap-2 bg-scout-green hover:bg-scout-green-dark text-white px-6 py-3 rounded-xl font-black uppercase tracking-widest text-xs transition-all shadow-md active:scale-95"
         >
-          <PlusCircle size={20} />
+          <PlusCircle size={18} />
           <span>New Event</span>
         </Link>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {events?.length === 0 ? (
-          <div className="col-span-full py-12 text-center bg-white border-2 border-dashed border-gray-300 rounded-lg">
-            <Calendar className="mx-auto text-gray-400 mb-4" size={48} />
-            <h3 className="text-lg font-medium text-gray-900">No events yet</h3>
-            <p className="text-gray-500 mb-6">Create your first event to get started.</p>
+          <div className="col-span-full py-20 text-center bg-khaki/30 border-2 border-dashed border-khaki-dark rounded-3xl">
+            <Calendar className="mx-auto text-khaki-dark mb-4" size={64} />
+            <h3 className="text-xl font-black text-scout-green-dark uppercase tracking-tight">No events yet</h3>
+            <p className="text-gray-500 mb-8 font-bold">Start your scouting season by creating an event.</p>
             <Link
               href="/events/new"
-              className="text-blue-600 hover:text-blue-800 font-semibold"
+              className="inline-flex items-center gap-2 bg-scout-green text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-scout-green-dark transition-all shadow-lg shadow-scout-green/20"
             >
               Create an event &rarr;
             </Link>
@@ -43,13 +43,13 @@ export default function Home() {
             <Link
               key={event.id}
               href={`/events/${event.id}`}
-              className="group bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-all border-l-4 border-l-blue-600"
+              className="group bg-white border-2 border-gray-100 rounded-3xl p-8 hover:shadow-xl hover:border-scout-green/30 transition-all border-l-8 border-l-scout-green"
             >
-              <div className="flex justify-between items-start mb-4">
-                <div className="bg-blue-50 text-blue-700 p-2 rounded-lg">
-                  <Calendar size={24} />
+              <div className="flex justify-between items-start mb-6">
+                <div className="bg-khaki text-scout-green p-3 rounded-2xl">
+                  <Calendar size={28} />
                 </div>
-                <ChevronRight className="text-gray-400 group-hover:text-blue-600 transition-colors" />
+                <ChevronRight className="text-gray-300 group-hover:text-scout-green transition-all group-hover:translate-x-1" size={24} />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-1">{event.name}</h3>
               <p className="text-gray-500 text-sm mb-4">

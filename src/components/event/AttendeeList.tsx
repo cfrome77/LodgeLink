@@ -40,16 +40,16 @@ export default function AttendeeList({ eventId, attendees }: AttendeeListProps) 
           <input
             type="text"
             placeholder="Search attendees..."
-            className="w-full pl-10 pr-4 py-2 border-2 border-gray-100 rounded-xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-600 transition-all font-bold"
+            className="w-full pl-10 pr-4 py-2 border-2 border-gray-100 rounded-xl outline-none focus:ring-4 focus:ring-scout-green/10 focus:border-scout-green transition-all font-bold"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <button
           onClick={() => setIsAdding(true)}
-          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl font-black transition-all shadow-md active:scale-95"
+          className="inline-flex items-center gap-2 bg-scout-green hover:bg-scout-green-dark text-white px-6 py-2 rounded-xl font-black transition-all shadow-md active:scale-95 uppercase tracking-widest text-xs"
         >
-          <UserPlus size={20} />
+          <UserPlus size={18} />
           <span>Add Attendee</span>
         </button>
       </div>
@@ -78,10 +78,10 @@ export default function AttendeeList({ eventId, attendees }: AttendeeListProps) 
                   <tr key={attendee.id} className="hover:bg-gray-50/50 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="font-bold text-gray-900">{attendee.firstName} {attendee.middleName ? `${attendee.middleName} ` : ''}{attendee.lastName}</div>
-                      {attendee.isWalkIn && <span className="text-[9px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full font-black uppercase tracking-wider">Walk-in</span>}
+                      {attendee.isWalkIn && <span className="text-[9px] bg-scout-green/10 text-scout-green px-1.5 py-0.5 rounded-full font-black uppercase tracking-wider">Walk-in</span>}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-xs font-black text-blue-600 uppercase tracking-tighter">{attendee.role || '-'}</div>
+                      <div className="text-xs font-black text-scout-green uppercase tracking-tighter">{attendee.role || '-'}</div>
                       <div className="text-[10px] text-gray-400 font-mono">{attendee.memberId || '-'}</div>
                     </td>
                     <td className="px-6 py-4">
@@ -109,7 +109,7 @@ export default function AttendeeList({ eventId, attendees }: AttendeeListProps) 
                       <div className="flex justify-end gap-2">
                         <button
                           onClick={() => setEditingAttendee(attendee)}
-                          className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                          className="p-2 text-gray-400 hover:text-scout-green hover:bg-khaki rounded-lg transition-all"
                           title="Edit"
                         >
                           <Edit2 size={18} />

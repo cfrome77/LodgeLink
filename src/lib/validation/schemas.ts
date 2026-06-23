@@ -11,9 +11,7 @@ export const AttendeeSchema = z.object({
   lastName: z.string().min(1, 'Last name is required'),
   middleName: z.string().optional().or(z.literal('')),
   memberId: z.string().min(1, 'Member ID is required'),
-  status: z.enum(['present', 'partial', 'absent'], {
-    errorMap: () => ({ message: 'Attendance status is required' })
-  }),
+  status: z.enum(['present', 'partial', 'absent']),
   notes: z.string().optional().or(z.literal('')),
   isWalkIn: z.boolean(),
   isImported: z.boolean(),

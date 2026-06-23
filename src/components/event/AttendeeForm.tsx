@@ -75,14 +75,14 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
   };
 
   const sectionLabelClass = "flex items-center gap-2 text-xs font-black text-gray-400 uppercase tracking-widest mb-4 mt-2";
-  const inputClass = "w-full px-4 py-3 border-2 border-gray-100 rounded-xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-600 transition-all text-sm font-bold";
-  const labelClass = "block text-xs font-bold text-gray-500 mb-1 ml-1";
-  const checkboxContainerClass = "flex items-center gap-3 p-4 border-2 border-gray-50 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer";
+  const inputClass = "w-full px-4 py-3 border-2 border-gray-100 rounded-xl outline-none focus:ring-4 focus:ring-scout-green/10 focus:border-scout-green transition-all text-sm font-bold";
+  const labelClass = "block text-xs font-bold text-gray-500 mb-1 ml-1 uppercase tracking-wider";
+  const checkboxContainerClass = "flex items-center gap-3 p-4 border-2 border-gray-50 rounded-xl hover:bg-khaki/30 transition-colors cursor-pointer";
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
-        <div className="flex justify-between items-center px-8 py-6 border-b border-gray-100 bg-gray-50/50">
+        <div className="flex justify-between items-center px-8 py-6 border-b border-gray-100 bg-khaki">
           <h2 className="text-2xl font-black text-gray-900 tracking-tight">{title}</h2>
           <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
             <X size={24} />
@@ -164,7 +164,7 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
                   type="checkbox"
                   {...register('ordeal')}
                   onChange={handleOrdealChange}
-                  className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="w-5 h-5 rounded border-gray-300 text-scout-green focus:ring-scout-green"
                 />
                 <span className="text-sm font-bold text-gray-700">Ordeal</span>
               </label>
@@ -174,12 +174,12 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
                   type="checkbox"
                   {...register('brotherhood')}
                   onChange={handleBrotherhoodChange}
-                  className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="w-5 h-5 rounded border-gray-300 text-scout-green focus:ring-scout-green"
                 />
                 <span className="text-sm font-bold text-gray-700">Brotherhood</span>
               </label>
               <label className={checkboxContainerClass}>
-                <input type="checkbox" {...register('healthForm')} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                <input type="checkbox" {...register('healthForm')} className="w-5 h-5 rounded border-gray-300 text-scout-green focus:ring-scout-green" />
                 <span className="text-sm font-bold text-gray-700">Health Form</span>
               </label>
             </div>
@@ -216,7 +216,7 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
               </div>
               <div className="flex items-end">
                 <label className={cn(checkboxContainerClass, "w-full")}>
-                  <input type="checkbox" {...register('paidInFull')} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                  <input type="checkbox" {...register('paidInFull')} className="w-5 h-5 rounded border-gray-300 text-scout-green focus:ring-scout-green" />
                   <span className="text-sm font-bold text-gray-700">Paid In Full</span>
                 </label>
               </div>
@@ -262,12 +262,12 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
           </section>
 
           <div className="flex items-center gap-3">
-            <input type="checkbox" id="isWalkIn" {...register('isWalkIn')} className="rounded text-blue-600" />
-            <label htmlFor="isWalkIn" className="text-sm font-bold text-gray-700">Mark as Walk-in</label>
+            <input type="checkbox" id="isWalkIn" {...register('isWalkIn')} className="rounded text-scout-green" />
+            <label htmlFor="isWalkIn" className="text-sm font-bold text-gray-700 uppercase tracking-widest">Mark as Walk-in</label>
           </div>
         </form>
 
-        <div className="p-8 border-t border-gray-100 bg-gray-50/50 flex justify-end gap-4">
+        <div className="p-8 border-t border-gray-100 bg-khaki flex justify-end gap-4">
           <button
             type="button"
             onClick={onClose}
@@ -277,7 +277,7 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
           </button>
           <button
             onClick={handleSubmit(onSubmit)}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-black shadow-lg shadow-blue-200 active:scale-95 transition-all"
+            className="flex items-center gap-2 bg-scout-green hover:bg-scout-green-dark text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm shadow-lg shadow-scout-green/20 active:scale-95 transition-all"
           >
             <Save size={20} />
             Save Attendee

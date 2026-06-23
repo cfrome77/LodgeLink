@@ -39,7 +39,7 @@ export default function EventDetailPage() {
   if (!event) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-scout-green mb-4"></div>
         <p className="text-gray-500">Loading event details...</p>
       </div>
     );
@@ -79,8 +79,8 @@ export default function EventDetailPage() {
                   className={cn(
                     "flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black transition-all",
                     activeTab === tab.id
-                      ? "bg-blue-600 text-white shadow-md shadow-blue-200"
-                      : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
+                      ? "bg-scout-green text-white shadow-md shadow-scout-green/20"
+                      : "text-gray-500 hover:text-gray-900 hover:bg-khaki/50"
                   )}
                 >
                   <tab.icon size={18} />
@@ -128,7 +128,7 @@ export default function EventDetailPage() {
               <div className="grid gap-3">
                 <button
                   onClick={() => setIsExportModalOpen(true)}
-                  className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-4 rounded-xl font-black transition-all shadow-md active:scale-95"
+                  className="flex items-center justify-center gap-2 bg-scout-green hover:bg-scout-green-dark text-white px-6 py-4 rounded-xl font-black transition-all shadow-md active:scale-95 uppercase tracking-widest text-sm"
                 >
                   <Download size={20} />
                   Export Data
@@ -154,7 +154,7 @@ export default function EventDetailPage() {
             onClick={() => setActiveTab(tab.id as Tab)}
             className={cn(
               "flex flex-col items-center gap-1 p-2 rounded-xl transition-all",
-              activeTab === tab.id ? "text-blue-600 scale-110" : "text-gray-400"
+              activeTab === tab.id ? "text-scout-green scale-110" : "text-gray-400"
             )}
           >
             <tab.icon size={24} strokeWidth={activeTab === tab.id ? 2.5 : 2} />

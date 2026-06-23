@@ -17,8 +17,8 @@ export default function ReconciliationView({ attendees }: ReconciliationViewProp
     <div className="space-y-8">
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-          <div className="text-blue-600 mb-2 bg-blue-50 w-fit p-2 rounded-lg">
+        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm border-b-4 border-b-scout-green">
+          <div className="text-scout-green mb-2 bg-khaki w-fit p-2 rounded-lg">
             <Users size={24} />
           </div>
           <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Registered</p>
@@ -31,8 +31,8 @@ export default function ReconciliationView({ attendees }: ReconciliationViewProp
           <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Checked In</p>
           <h3 className="text-3xl font-bold text-gray-900">{stats.checkedIn}</h3>
         </div>
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-          <div className="text-purple-600 mb-2 bg-purple-50 w-fit p-2 rounded-lg">
+        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm border-b-4 border-b-scout-green-light">
+          <div className="text-scout-green-light mb-2 bg-khaki w-fit p-2 rounded-lg">
             <UserPlus size={24} />
           </div>
           <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Walk-ins</p>
@@ -77,12 +77,12 @@ export default function ReconciliationView({ attendees }: ReconciliationViewProp
 
         {/* Checked In List */}
         <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm flex flex-col">
-          <div className="px-6 py-4 border-b border-gray-200 bg-green-50/50 flex items-center justify-between">
-            <h3 className="font-bold text-green-800 flex items-center gap-2">
+          <div className="px-6 py-4 border-b border-gray-200 bg-khaki flex items-center justify-between">
+            <h3 className="font-bold text-scout-green-dark flex items-center gap-2">
               <FileText size={18} />
               Confirmed
             </h3>
-            <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-bold">{checkedInAttendees.length}</span>
+            <span className="bg-scout-green text-white text-xs px-2 py-0.5 rounded-full font-bold">{checkedInAttendees.length}</span>
           </div>
           <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
             {checkedInAttendees.length === 0 ? (
@@ -94,7 +94,7 @@ export default function ReconciliationView({ attendees }: ReconciliationViewProp
                     <tr key={a.id} className="hover:bg-gray-50">
                       <td className="px-6 py-3">
                         <div className="font-medium text-gray-900">{a.firstName} {a.lastName}</div>
-                        {a.isWalkIn && <span className="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-bold uppercase">Walk-in</span>}
+                        {a.isWalkIn && <span className="text-[10px] bg-scout-green/10 text-scout-green px-1.5 py-0.5 rounded-full font-bold uppercase">Walk-in</span>}
                       </td>
                       <td className="px-6 py-3">
                         <span className={`text-xs font-bold uppercase ${a.status === 'present' ? 'text-green-600' : 'text-yellow-600'}`}>

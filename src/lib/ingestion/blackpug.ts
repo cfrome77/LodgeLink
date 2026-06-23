@@ -11,7 +11,7 @@ export function parseBlackPugCSV(csvContent: string, eventId: number): Attendee[
     skipEmptyLines: true,
   });
 
-  const data = results.data as any[];
+  const data = results.data as Record<string, string>[];
   if (data.length === 0) return [];
 
   const headers = Object.keys(data[0]);
@@ -48,7 +48,7 @@ export function parseBlackPugCSV(csvContent: string, eventId: number): Attendee[
 
     if (firstName && lastName) {
       // Helper to parse booleans from strings
-      const parseBool = (val: any) => {
+      const parseBool = (val: string | boolean | undefined | null) => {
         if (typeof val === 'boolean') return val;
         if (!val) return false;
         const s = String(val).toLowerCase();

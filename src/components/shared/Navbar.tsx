@@ -13,16 +13,16 @@ export default function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex items-center gap-2">
-              <div className="bg-blue-600 p-1.5 rounded-lg text-white">
+              <div className="bg-scout-green p-1.5 rounded-lg text-white">
                 <Compass size={24} />
               </div>
-              <span className="text-xl font-black tracking-tight text-gray-900">LodgeMaster <span className="text-blue-600">Companion</span></span>
+              <span className="text-xl font-black tracking-tight text-gray-900">LodgeMaster <span className="text-scout-green">Companion</span></span>
             </Link>
           </div>
 
           <div className="hidden sm:flex sm:items-center sm:gap-6">
-            <Link href="/" className="text-sm font-bold text-gray-600 hover:text-blue-600 transition-colors">Events</Link>
-            <Link href="/events/new" className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-100 transition-colors">New Event</Link>
+            <Link href="/" className="text-sm font-bold text-gray-600 hover:text-scout-green transition-colors">Events</Link>
+            <Link href="/events/new" className="bg-khaki text-scout-green-dark px-4 py-2 rounded-lg text-sm font-bold hover:bg-khaki-dark transition-colors border border-khaki-dark/20">New Event</Link>
           </div>
 
           <div className="flex items-center sm:hidden">
@@ -50,7 +50,7 @@ export default function Navbar() {
             <Link
               href="/events/new"
               onClick={() => setIsOpen(false)}
-              className="block px-3 py-4 text-base font-bold text-blue-600 hover:bg-blue-50 rounded-md"
+              className="block px-3 py-4 text-base font-bold text-scout-green hover:bg-khaki rounded-md"
             >
               New Event
             </Link>

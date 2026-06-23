@@ -11,7 +11,7 @@ export class LodgeMasterDatabase extends Dexie {
     this.version(2).stores({
       events: '++id, name, date, chapter',
       attendees: '++id, eventId, firstName, lastName, memberId, status, isWalkIn, isImported, role, paidInFull, healthForm'
-    }).upgrade(tx => {
+    }).upgrade(() => {
       // Logic for upgrade if needed, dexie handles adding fields to stores automatically if version increases
     });
   }
