@@ -77,7 +77,7 @@ export function parseBlackPugCSV(csvContent: string, eventId: number): Attendee[
         paidInFull: isPaidInFull,
         dateRegistered: mapping.dateRegistered ? row[mapping.dateRegistered]?.trim() : undefined,
         datePaid: mapping.datePaid ? row[mapping.datePaid]?.trim() : undefined,
-        service: mapping.service ? row[mapping.service]?.trim() : undefined,
+        service: mapping.service ? parseFloat(String(row[mapping.service]).replace(/[^0-9.-]+/g, "")) || 0 : 0,
         ordeal: mapping.ordeal ? parseBool(row[mapping.ordeal]) : false,
         brotherhood: mapping.brotherhood ? parseBool(row[mapping.brotherhood]) : false,
         healthForm: mapping.healthForm ? parseBool(row[mapping.healthForm]) : false,

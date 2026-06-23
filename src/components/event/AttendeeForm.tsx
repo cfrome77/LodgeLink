@@ -89,7 +89,7 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="overflow-y-auto flex-1 p-8 space-y-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        <form onSubmit={handleSubmit(onSubmit)} className="overflow-y-auto flex-1 p-8 space-y-8 custom-scrollbar">
           {/* Personal Info */}
           <section>
             <div className={sectionLabelClass}>
