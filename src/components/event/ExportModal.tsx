@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Event } from '@/types/event';
 import { Attendee } from '@/types/attendee';
-import { EXPORT_PRESETS, ALL_COLUMNS, ExportColumn } from '@/lib/export/presets';
+import { ALL_COLUMNS, ExportColumn } from '@/lib/export/presets';
 import { exportToExcel, exportToCSV } from '@/lib/export/excel';
-import { ChevronDown, ChevronRight, CheckSquare, Square } from 'lucide-react';
+import { CheckSquare, Square, ListFilter, CheckCircle2, Circle } from 'lucide-react';
 
 interface ExportModalProps {
   event: Event;
@@ -15,23 +15,11 @@ interface ExportModalProps {
 }
 
 export default function ExportModal({ event, attendees, isOpen, onClose }: ExportModalProps) {
-  const [selectedPresetId, setSelectedPresetId] = useState<string>(EXPORT_PRESETS[0].id);
-  const [selectedColumns, setSelectedColumns] = useState<ExportColumn[]>(EXPORT_PRESETS[0].columns);
-  const [showCustomFields, setShowCustomFields] = useState(false);
-
-  useEffect(() => {
-    if (selectedPresetId !== 'custom') {
-      const preset = EXPORT_PRESETS.find(p => p.id === selectedPresetId);
-      if (preset) {
-        setSelectedColumns(preset.columns);
-      }
-    }
-  }, [selectedPresetId]);
+  const [selectedColumns, setSelectedColumns] = useState<ExportColumn[]>([]);
 
   if (!isOpen) return null;
 
   const toggleColumn = (col: ExportColumn) => {
-    setSelectedPresetId('custom');
     setSelectedColumns(prev => {
       const isSelected = prev.some(c => c.key === col.key && c.header === col.header);
       if (isSelected) {
@@ -40,6 +28,14 @@ export default function ExportModal({ event, attendees, isOpen, onClose }: Expor
         return [...prev, col];
       }
     });
+  };
+
+  const handleSelectAll = () => {
+    setSelectedColumns([...ALL_COLUMNS]);
+  };
+
+  const handleDeselectAll = () => {
+    setSelectedColumns([]);
   };
 
   const isColumnSelected = (col: ExportColumn) => {
@@ -72,84 +68,57 @@ export default function ExportModal({ event, attendees, isOpen, onClose }: Expor
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-8 space-y-8 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-          {/* Presets */}
-          <section>
-            <div className="flex items-center gap-2 text-xs font-black text-gray-400 uppercase tracking-widest mb-4">
-              <span>Templates</span>
+        <div className="flex-1 overflow-y-auto p-8 space-y-6 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-zinc-50 p-6 rounded-2xl border-2 border-gray-100">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-blue-600 rounded-xl text-white">
+                <ListFilter size={24} />
+              </div>
+              <div>
+                <h3 className="text-lg font-black text-gray-900 tracking-tight">Select Export Fields</h3>
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mt-0.5">
+                  {selectedColumns.length} fields selected
+                </p>
+              </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {EXPORT_PRESETS.map((preset) => (
-                <button
-                  key={preset.id}
-                  onClick={() => setSelectedPresetId(preset.id)}
-                  className={`flex flex-col items-start text-left p-4 rounded-2xl border-2 transition-all ${
-                    selectedPresetId === preset.id
-                      ? 'border-blue-600 bg-blue-50/50'
-                      : 'border-gray-100 hover:border-gray-200'
-                  }`}
-                >
-                  <span className={`text-sm font-black ${selectedPresetId === preset.id ? 'text-blue-700' : 'text-gray-900'}`}>
-                    {preset.name}
-                  </span>
-                  <span className="text-[10px] font-bold text-gray-500 mt-1 uppercase tracking-tighter">
-                    {preset.columns.length} Fields
-                  </span>
-                </button>
-              ))}
+            <div className="flex gap-2">
               <button
-                onClick={() => {
-                  setSelectedPresetId('custom');
-                  setShowCustomFields(true);
-                }}
-                className={`flex flex-col items-start text-left p-4 rounded-2xl border-2 transition-all ${
-                  selectedPresetId === 'custom'
-                    ? 'border-blue-600 bg-blue-50/50'
-                    : 'border-gray-100 hover:border-gray-200'
-                }`}
+                onClick={handleSelectAll}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border-2 border-gray-200 rounded-xl text-xs font-black uppercase tracking-widest hover:border-blue-600 hover:text-blue-600 transition-all active:scale-95"
               >
-                <span className={`text-sm font-black ${selectedPresetId === 'custom' ? 'text-blue-700' : 'text-gray-900'}`}>
-                  Custom Selection
-                </span>
-                <span className="text-[10px] font-bold text-gray-500 mt-1 uppercase tracking-tighter">
-                  {selectedColumns.length} Selected
-                </span>
+                <CheckCircle2 size={16} />
+                All
+              </button>
+              <button
+                onClick={handleDeselectAll}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border-2 border-gray-200 rounded-xl text-xs font-black uppercase tracking-widest hover:border-red-600 hover:text-red-600 transition-all active:scale-95"
+              >
+                <Circle size={16} />
+                None
               </button>
             </div>
-          </section>
+          </div>
 
-          {/* Column Selection */}
-          <section>
-            <button
-              onClick={() => setShowCustomFields(!showCustomFields)}
-              className="flex items-center gap-2 text-xs font-black text-gray-400 uppercase tracking-widest mb-4 hover:text-gray-600 transition-colors"
-            >
-              {showCustomFields ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-              <span>Field Selection</span>
-              <span className="ml-auto text-[10px] font-bold bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
-                {selectedColumns.length} / {ALL_COLUMNS.length}
-              </span>
-            </button>
-
-            {showCustomFields && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
-                {ALL_COLUMNS.map((col) => (
-                  <button
-                    key={`${col.key}-${col.header}`}
-                    onClick={() => toggleColumn(col)}
-                    className={`flex items-center gap-2 p-3 rounded-xl border-2 transition-all text-left ${
-                      isColumnSelected(col)
-                        ? 'border-blue-200 bg-blue-50 text-blue-700'
-                        : 'border-gray-50 text-gray-500 hover:border-gray-200'
-                    }`}
-                  >
-                    {isColumnSelected(col) ? <CheckSquare size={16} /> : <Square size={16} />}
-                    <span className="text-xs font-bold leading-tight">{col.header}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </section>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {ALL_COLUMNS.map((col) => (
+              <button
+                key={`${col.key}-${col.header}`}
+                onClick={() => toggleColumn(col)}
+                className={`flex items-center gap-3 p-4 rounded-2xl border-2 transition-all text-left group ${
+                  isColumnSelected(col)
+                    ? 'border-blue-600 bg-blue-50/50 shadow-sm'
+                    : 'border-gray-100 bg-white hover:border-gray-200'
+                }`}
+              >
+                <div className={`transition-colors ${isColumnSelected(col) ? 'text-blue-600' : 'text-gray-300 group-hover:text-gray-400'}`}>
+                  {isColumnSelected(col) ? <CheckSquare size={20} /> : <Square size={20} />}
+                </div>
+                <span className={`text-sm font-bold tracking-tight ${isColumnSelected(col) ? 'text-blue-900' : 'text-gray-600'}`}>
+                  {col.header}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="p-8 border-t border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row justify-end gap-3">
@@ -162,13 +131,15 @@ export default function ExportModal({ event, attendees, isOpen, onClose }: Expor
           <div className="flex gap-2">
             <button
               onClick={handleExportCSV}
-              className="flex-1 sm:flex-none bg-white border-2 border-gray-200 hover:border-gray-300 text-gray-700 px-6 py-4 rounded-2xl font-black uppercase tracking-widest text-sm transition-all active:scale-95"
+              disabled={selectedColumns.length === 0}
+              className="flex-1 sm:flex-none bg-white border-2 border-gray-200 hover:border-gray-300 disabled:opacity-50 disabled:hover:border-gray-200 text-gray-700 px-6 py-4 rounded-2xl font-black uppercase tracking-widest text-sm transition-all active:scale-95"
             >
               CSV
             </button>
             <button
               onClick={handleExportExcel}
-              className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm shadow-lg shadow-blue-200 active:scale-95 transition-all"
+              disabled={selectedColumns.length === 0}
+              className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm shadow-lg shadow-blue-200 active:scale-95 transition-all"
             >
               Excel
             </button>
