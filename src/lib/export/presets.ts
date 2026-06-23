@@ -4,8 +4,6 @@ export interface ExportColumn {
 }
 
 export const ALL_COLUMNS: ExportColumn[] = [
-  { header: 'First Name', key: 'firstName' },
-  { header: 'Last Name', key: 'lastName' },
   { header: 'Name', key: 'fullName' },
   { header: 'Member ID', key: 'memberId' },
   { header: 'Role', key: 'role' },

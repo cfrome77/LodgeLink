@@ -48,10 +48,10 @@ export default function EventHeader({ event, totalAttendees }: EventHeaderProps)
                 </h1>
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
                   title="Edit Event"
                 >
-                  <Settings size={18} />
+                <Settings size={20} />
                 </button>
               </div>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm font-bold text-gray-500">
