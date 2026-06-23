@@ -55,7 +55,7 @@ export default function AttendeeList({ eventId, attendees }: AttendeeListProps) 
       </div>
 
       <div className="bg-white border-2 border-gray-100 rounded-2xl overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto custom-scrollbar">
           <table className="w-full text-left border-collapse">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>

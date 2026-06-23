@@ -48,3 +48,7 @@ body {
   scrollbar-width: thin;
   scrollbar-color: #d1d5db #f1f1f1;
 }
+
+@utility pb-safe-area {
+  padding-bottom: env(safe-area-inset-bottom);
+}

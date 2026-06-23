@@ -46,9 +46,9 @@ export default function CheckInMode({ eventId, attendees }: CheckInModeProps) {
   };
 
   return (
-    <div className="relative pb-24 min-h-full">
+    <div className="relative pb-32 min-h-full">
       {/* Search Header - Pinned at top of content area */}
-      <div className="sticky top-0 sm:top-24 z-20 bg-zinc-50/95 backdrop-blur-sm pt-2 pb-4 px-1">
+      <div className="sticky top-[73px] sm:top-24 z-20 bg-zinc-50/95 backdrop-blur-sm pt-2 pb-4 px-1">
         <div className="relative group">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition-colors" size={24} />
           <input
@@ -95,7 +95,7 @@ export default function CheckInMode({ eventId, attendees }: CheckInModeProps) {
       </div>
 
       {/* Floating Action Button (FAB) */}
-      <div className="fixed bottom-6 right-6 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-40">
+      <div className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-6 sm:bottom-8 sm:right-8 sm:left-auto sm:translate-x-0 z-40">
         <button
           onClick={() => setIsAddingWalkIn(true)}
           className="flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-5 rounded-full font-black text-lg transition-all shadow-2xl active:scale-95 shadow-blue-500/40"

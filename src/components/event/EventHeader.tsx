@@ -32,7 +32,7 @@ export default function EventHeader({ event, totalAttendees }: EventHeaderProps)
 
   return (
     <>
-      <header className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-30 px-4 py-4 sm:py-6">
+      <header className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-40 px-4 py-4 sm:py-6">
         <div className="container mx-auto">
           <div className="flex items-center gap-4">
             <Link

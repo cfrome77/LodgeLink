@@ -68,7 +68,7 @@ export default function ExportModal({ event, attendees, isOpen, onClose }: Expor
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-8 space-y-6 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex-1 overflow-y-auto p-8 space-y-6 custom-scrollbar">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-zinc-50 p-6 rounded-2xl border-2 border-gray-100">
             <div className="flex items-center gap-3">
               <div className="p-3 bg-blue-600 rounded-xl text-white">
