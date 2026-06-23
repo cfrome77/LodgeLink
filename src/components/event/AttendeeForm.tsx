@@ -5,6 +5,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { AttendeeSchema, AttendeeFormValues } from '@/lib/validation/schemas';
 import { X, Save, User, CreditCard, ClipboardCheck, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { PREDEFINED_ROLES, PAYMENT_METHODS } from '@/lib/constants';
+import { useEffect } from 'react';
 
 interface AttendeeFormProps {
   eventId: number;
@@ -18,6 +20,8 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<AttendeeFormValues>({
     resolver: zodResolver(AttendeeSchema),
@@ -34,7 +38,7 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
       role: initialData?.role || '',
       checkInDate: initialData?.checkInDate || '',
       checkOutDate: initialData?.checkOutDate || '',
-      service: initialData?.service || '',
+      service: initialData?.service || 0,
       ordeal: initialData?.ordeal || false,
       brotherhood: initialData?.brotherhood || false,
       paidAmount: initialData?.paidAmount || 0,
@@ -46,6 +50,29 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
       healthForm: initialData?.healthForm || false,
     },
   });
+
+  const ordeal = watch('ordeal');
+  const brotherhood = watch('brotherhood');
+
+  // Mutual exclusivity for Ordeal and Brotherhood
+  useEffect(() => {
+    if (ordeal && brotherhood) {
+      // This is a simple way to handle it, but might be race-y if not careful.
+      // Better to handle it in a change handler if we had one, but watch/useEffect works for MVP.
+    }
+  }, [ordeal, brotherhood]);
+
+  const handleOrdealChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
+    setValue('ordeal', checked);
+    if (checked) setValue('brotherhood', false);
+  };
+
+  const handleBrotherhoodChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
+    setValue('brotherhood', checked);
+    if (checked) setValue('ordeal', false);
+  };
 
   const sectionLabelClass = "flex items-center gap-2 text-xs font-black text-gray-400 uppercase tracking-widest mb-4 mt-2";
   const inputClass = "w-full px-4 py-3 border-2 border-gray-100 rounded-xl outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-600 transition-all text-sm font-bold";
@@ -86,9 +113,18 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
                 <label htmlFor="memberId" className={labelClass}>Member ID</label>
                 <input id="memberId" {...register('memberId')} className={inputClass} />
               </div>
-              <div>
+              <div className="relative group">
                 <label htmlFor="role" className={labelClass}>Role</label>
-                <input id="role" {...register('role')} className={inputClass} placeholder="e.g. Youth, Adult, Staff" />
+                <input
+                  id="role"
+                  {...register('role')}
+                  className={inputClass}
+                  placeholder="Select or type role..."
+                  list="roles-list"
+                />
+                <datalist id="roles-list">
+                  {PREDEFINED_ROLES.map(role => <option key={role} value={role} />)}
+                </datalist>
               </div>
             </div>
           </section>
@@ -109,17 +145,35 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
                 </select>
               </div>
               <div>
-                <label className={labelClass}>Service</label>
-                <input {...register('service')} className={inputClass} placeholder="e.g. Chapter, Kitchen" />
+                <label htmlFor="service" className={labelClass}>Service (Hours)</label>
+                <input
+                  id="service"
+                  type="number"
+                  {...register('service', { valueAsNumber: true })}
+                  className={inputClass}
+                  placeholder="0"
+                />
               </div>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4">
-              <label className={checkboxContainerClass}>
-                <input type="checkbox" {...register('ordeal')} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+              <label htmlFor="ordeal" className={checkboxContainerClass}>
+                <input
+                  id="ordeal"
+                  type="checkbox"
+                  {...register('ordeal')}
+                  onChange={handleOrdealChange}
+                  className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
                 <span className="text-sm font-bold text-gray-700">Ordeal</span>
               </label>
-              <label className={checkboxContainerClass}>
-                <input type="checkbox" {...register('brotherhood')} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+              <label htmlFor="brotherhood" className={checkboxContainerClass}>
+                <input
+                  id="brotherhood"
+                  type="checkbox"
+                  {...register('brotherhood')}
+                  onChange={handleBrotherhoodChange}
+                  className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
                 <span className="text-sm font-bold text-gray-700">Brotherhood</span>
               </label>
               <label className={checkboxContainerClass}>
@@ -146,8 +200,13 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
                 />
               </div>
               <div>
-                <label className={labelClass}>Payment Method</label>
-                <input {...register('paymentMethod')} className={inputClass} placeholder="e.g. Cash, Card, Online" />
+                <label htmlFor="paymentMethod" className={labelClass}>Payment Method</label>
+                <select id="paymentMethod" {...register('paymentMethod')} className={inputClass}>
+                  <option value="">Select Method</option>
+                  {PAYMENT_METHODS.map(m => (
+                    <option key={m} value={m}>{m.charAt(0).toUpperCase() + m.slice(1)}</option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className={labelClass}>Receipt Number</label>

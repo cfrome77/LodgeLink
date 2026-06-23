@@ -16,7 +16,7 @@ export interface Attendee {
   role?: string;
   checkInDate?: string;
   checkOutDate?: string;
-  service?: string;
+  service?: number; // Service hours
   ordeal?: boolean;
   brotherhood?: boolean;
   paidAmount?: number;

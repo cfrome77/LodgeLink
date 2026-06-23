@@ -94,9 +94,9 @@ export default function AttendeeCard({ attendee, onToggleStatus, onLongPress }: 
           </span>
         )}
 
-        {attendee.service && (
+        {attendee.service !== undefined && attendee.service > 0 && (
           <span className="text-[9px] font-black uppercase tracking-tighter text-gray-600 bg-gray-100 px-2 py-0.5 rounded-md truncate max-w-[100px]">
-            {attendee.service}
+            {attendee.service} hrs
           </span>
         )}
       </div>

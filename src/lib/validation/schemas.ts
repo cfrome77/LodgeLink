@@ -21,7 +21,7 @@ export const AttendeeSchema = z.object({
   role: z.string().optional().or(z.literal('')),
   checkInDate: z.string().optional().or(z.literal('')),
   checkOutDate: z.string().optional().or(z.literal('')),
-  service: z.string().optional().or(z.literal('')),
+  service: z.number().optional(),
   ordeal: z.boolean(),
   brotherhood: z.boolean(),
   paidAmount: z.number(),
