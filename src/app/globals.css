@@ -7,38 +7,74 @@
   /* =========================
      BASE SURFACES
   ========================= */
-  --color-background: #0b0f0c;
-  --color-surface: #121814;
-  --color-surface-2: #1a231d;
-  --color-border: #232a25;
-
-  /* text */
-  --color-foreground: #e6e6e6;
-  --color-muted: #a3a3a3;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
 
   /* =========================
-     BRAND (ONLY PRIMARY ACTION)
+     BRAND (SCOUT THEME)
   ========================= */
-  --color-primary: #2d522d;
-  --color-primary-hover: #3a6b3a;
-  --color-primary-dark: #1b331b;
+  --color-scout-green: #2d522d;
+  --color-scout-green-hover: #3a6b3a;
+  --color-scout-green-dark: #1b331b;
 
-  /* =========================
-     ACCENTS (LIMITED USE)
-  ========================= */
   --color-oa-red: #e41e26;
+  --color-oa-red-hover: #c41920;
 
-  /* optional supporting tone */
   --color-khaki: #f3efe0;
+  --color-khaki-dark: #e6e0cc;
+
+  /* =========================
+     STATUS COLORS
+  ========================= */
+  --color-status-present: var(--status-present);
+  --color-status-present-bg: var(--status-present-bg);
+  --color-status-partial: var(--status-partial);
+  --color-status-partial-bg: var(--status-partial-bg);
+  --color-status-absent: var(--status-absent);
+  --color-status-absent-bg: var(--status-absent-bg);
+}
+
+/* =========================
+   LIGHT MODE (DEFAULT)
+========================= */
+:root {
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+  --surface: #f9fafb;
+  --surface-muted: #f3f4f6;
+  --border: #e5e7eb;
+  --muted: #6b7280;
+
+  --status-present: #166534;
+  --status-present-bg: #f0fdf4;
+  --status-partial: #92400e;
+  --status-partial-bg: #fffbeb;
+  --status-absent: #991b1b;
+  --status-absent-bg: #fef2f2;
 }
 
 /* =========================
    DARK MODE
 ========================= */
 @media (prefers-color-scheme: dark) {
-  @theme {
-    --color-background: #0a0a0a;
-    --color-foreground: #ededed;
+  :root {
+    --background: #0b0f0c;
+    --foreground: #e6e6e6;
+    --surface: #121814;
+    --surface-muted: #1a231d;
+    --border: #232a25;
+    --muted: #a3a3a3;
+
+    --status-present: #4ade80;
+    --status-present-bg: #052e16;
+    --status-partial: #fbbf24;
+    --status-partial-bg: #451a03;
+    --status-absent: #f87171;
+    --status-absent-bg: #450a0a;
   }
 }
 
@@ -71,22 +107,22 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--surface-muted);
   border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+  background: var(--border);
   border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: var(--muted);
 }
 
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #d1d5db #f1f1f1;
+  scrollbar-color: var(--border) var(--surface-muted);
 }
 
 /* =========================
