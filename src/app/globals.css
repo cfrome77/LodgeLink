@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+/* =========================
+   DESIGN TOKENS (Tailwind v4)
+========================= */
+@theme {
+  /* =========================
+     BASE SURFACES
+  ========================= */
+  --color-background: #0b0f0c;
+  --color-surface: #121814;
+  --color-surface-2: #1a231d;
+  --color-border: #232a25;
+
+  /* text */
+  --color-foreground: #e6e6e6;
+  --color-muted: #a3a3a3;
+
+  /* =========================
+     BRAND (ONLY PRIMARY ACTION)
+  ========================= */
+  --color-primary: #2d522d;
+  --color-primary-hover: #3a6b3a;
+  --color-primary-dark: #1b331b;
+
+  /* =========================
+     ACCENTS (LIMITED USE)
+  ========================= */
+  --color-oa-red: #e41e26;
+
+  /* optional supporting tone */
+  --color-khaki: #f3efe0;
+}
+
+/* =========================
+   DARK MODE
+========================= */
+@media (prefers-color-scheme: dark) {
+  @theme {
+    --color-background: #0a0a0a;
+    --color-foreground: #ededed;
+  }
+}
+
+/* =========================
+   BASE LAYOUT
+========================= */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+
+  font-family: var(--font-sans, Arial, Helvetica, sans-serif);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* =========================
+   CUSTOM SCROLLBAR
+========================= */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f1f1f1;
+}
+
+/* =========================
+   SAFE AREA UTILITY
+========================= */
+@layer utilities {
+  .pb-safe-area {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
