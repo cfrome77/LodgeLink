@@ -48,21 +48,30 @@ export default function ContactPage() {
             <h2 className="text-2xl font-black text-foreground uppercase tracking-tight mb-8">Get In Touch</h2>
 
             <div className="grid md:grid-cols-2 gap-6 mb-8">
-              <div className="p-6 bg-background border border-border rounded-2xl hover:border-scout-green transition-colors group cursor-pointer">
+              <a
+                href="mailto:support@lodgemastercompanion.example.com?subject=Bug Report - LodgeMaster Companion"
+                className="p-6 bg-background border border-border rounded-2xl hover:border-scout-green transition-colors group cursor-pointer"
+              >
                 <Bug className="text-scout-green mb-4 group-hover:scale-110 transition-transform" size={32} />
                 <h3 className="font-black text-foreground uppercase tracking-wider mb-2">Report a Bug</h3>
                 <p className="text-sm text-muted font-bold">Found an issue with check-ins or exports? Let us know.</p>
-              </div>
-              <div className="p-6 bg-background border border-border rounded-2xl hover:border-scout-green transition-colors group cursor-pointer">
+              </a>
+              <a
+                href="mailto:support@lodgemastercompanion.example.com?subject=Feature Request - LodgeMaster Companion"
+                className="p-6 bg-background border border-border rounded-2xl hover:border-scout-green transition-colors group cursor-pointer"
+              >
                 <HelpCircle className="text-scout-green mb-4 group-hover:scale-110 transition-transform" size={32} />
                 <h3 className="font-black text-foreground uppercase tracking-wider mb-2">Feature Request</h3>
                 <p className="text-sm text-muted font-bold">Have an idea to make the companion even better?</p>
-              </div>
-              <div className="p-6 bg-background border border-border rounded-2xl hover:border-scout-green transition-colors group cursor-pointer md:col-span-2">
+              </a>
+              <a
+                href="mailto:support@lodgemastercompanion.example.com?subject=General Support - LodgeMaster Companion"
+                className="p-6 bg-background border border-border rounded-2xl hover:border-scout-green transition-colors group cursor-pointer md:col-span-2"
+              >
                 <MessageSquare className="text-scout-green mb-4 group-hover:scale-110 transition-transform" size={32} />
                 <h3 className="font-black text-foreground uppercase tracking-wider mb-2">General Support</h3>
                 <p className="text-sm text-muted font-bold">Need help with setup, ingestion, or LodgeMaster reporting?</p>
-              </div>
+              </a>
             </div>
 
             <p className="text-center text-xs text-muted font-black uppercase tracking-widest">
