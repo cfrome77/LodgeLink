@@ -49,9 +49,9 @@ export default function Footer() {
           <div>
             <h4 className="font-black text-xs uppercase tracking-widest text-foreground mb-4">Organization</h4>
             <ul className="space-y-2 text-sm">
-              <li><a href="#" className="text-muted hover:text-scout-green transition-colors">About Us</a></li>
-              <li><a href="#" className="text-muted hover:text-scout-green transition-colors">Contact</a></li>
-              <li><a href="#" className="text-muted hover:text-scout-green transition-colors">Privacy Policy</a></li>
+              <li><Link href="/about" className="text-muted hover:text-scout-green transition-colors">About Us</Link></li>
+              <li><Link href="/contact" className="text-muted hover:text-scout-green transition-colors">Contact</Link></li>
+              <li><Link href="/privacy" className="text-muted hover:text-scout-green transition-colors">Privacy Policy</Link></li>
             </ul>
           </div>
         </div>
@@ -59,9 +59,9 @@ export default function Footer() {
         <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted font-bold uppercase tracking-wider">
           <p>© {new Date().getFullYear()} LodgeMaster Companion. Not an official Boy Scouts of America product.</p>
           <div className="flex gap-6">
-            <a href="#" className="hover:text-scout-green transition-colors">Terms</a>
-            <a href="#" className="hover:text-scout-green transition-colors">Privacy</a>
-            <a href="#" className="hover:text-scout-green transition-colors">Cookies</a>
+            <Link href="/terms" className="hover:text-scout-green transition-colors">Terms</Link>
+            <Link href="/privacy" className="hover:text-scout-green transition-colors">Privacy</Link>
+            <Link href="/cookies" className="hover:text-scout-green transition-colors">Cookies</Link>
           </div>
         </div>
       </div>
