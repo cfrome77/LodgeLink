@@ -1,11 +1,30 @@
 'use client';
 
 import Link from 'next/link';
-import { Compass, Menu, X, Facebook, Twitter, Instagram } from 'lucide-react';
-import { useState } from 'react';
+import { Compass, Menu, X, Facebook, Twitter, Instagram, Sun, Moon } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  useEffect(() => {
+    // Initialize theme state from document class
+    const isDark = document.documentElement.classList.contains('dark');
+    setTheme(isDark ? 'dark' : 'light');
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    if (newTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
 
   return (
     <nav className="bg-background border-b border-border relative z-30">
@@ -26,8 +45,8 @@ export default function Navbar() {
             </div>
           </div>
 
-          <div className="hidden sm:flex sm:items-center sm:gap-6">
-            <div className="flex items-center gap-4 mr-4 border-r border-border pr-4">
+          <div className="hidden sm:flex sm:items-center sm:gap-4">
+            <div className="flex items-center gap-4 mr-2 border-r border-border pr-4">
               <a href="#" className="text-muted hover:text-scout-green transition-colors" title="Facebook">
                 <Facebook size={18} />
               </a>
@@ -38,12 +57,27 @@ export default function Navbar() {
                 <Instagram size={18} />
               </a>
             </div>
+
+            <button
+              onClick={toggleTheme}
+              className="p-2 text-muted hover:text-scout-green hover:bg-surface rounded-lg transition-all mr-2"
+              title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+            >
+              {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+            </button>
+
             <Link href="/events/new" className="bg-khaki text-scout-green-dark px-4 py-2 rounded-lg text-sm font-bold hover:bg-khaki-dark transition-colors border border-khaki-dark/20">
               New Event
             </Link>
           </div>
 
-          <div className="flex items-center sm:hidden">
+          <div className="flex items-center sm:hidden gap-2">
+            <button
+              onClick={toggleTheme}
+              className="p-2 text-muted hover:text-scout-green hover:bg-surface rounded-lg transition-all"
+            >
+              {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+            </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-muted hover:text-foreground focus:outline-none p-2"
@@ -72,16 +106,18 @@ export default function Navbar() {
             >
               New Event
             </Link>
-            <div className="flex items-center gap-6 px-3 py-4 border-t border-border mt-2">
-              <a href="#" className="text-muted hover:text-scout-green transition-colors">
-                <Facebook size={20} />
-              </a>
-              <a href="#" className="text-muted hover:text-scout-green transition-colors">
-                <Twitter size={20} />
-              </a>
-              <a href="#" className="text-muted hover:text-scout-green transition-colors">
-                <Instagram size={20} />
-              </a>
+            <div className="flex items-center justify-between px-3 py-4 border-t border-border mt-2">
+              <div className="flex items-center gap-6">
+                <a href="#" className="text-muted hover:text-scout-green transition-colors">
+                  <Facebook size={20} />
+                </a>
+                <a href="#" className="text-muted hover:text-scout-green transition-colors">
+                  <Twitter size={20} />
+                </a>
+                <a href="#" className="text-muted hover:text-scout-green transition-colors">
+                  <Instagram size={20} />
+                </a>
+              </div>
             </div>
           </div>
         </div>

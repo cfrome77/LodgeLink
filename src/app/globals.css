@@ -60,22 +60,20 @@
 /* =========================
    DARK MODE
 ========================= */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0b0f0c;
-    --foreground: #e6e6e6;
-    --surface: #121814;
-    --surface-muted: #1a231d;
-    --border: #232a25;
-    --muted: #a3a3a3;
+.dark {
+  --background: #0b0f0c;
+  --foreground: #e6e6e6;
+  --surface: #121814;
+  --surface-muted: #1a231d;
+  --border: #232a25;
+  --muted: #a3a3a3;
 
-    --status-present: #4ade80;
-    --status-present-bg: #052e16;
-    --status-partial: #fbbf24;
-    --status-partial-bg: #451a03;
-    --status-absent: #f87171;
-    --status-absent-bg: #450a0a;
-  }
+  --status-present: #4ade80;
+  --status-present-bg: #052e16;
+  --status-partial: #fbbf24;
+  --status-partial-bg: #451a03;
+  --status-absent: #f87171;
+  --status-absent-bg: #450a0a;
 }
 
 /* =========================
@@ -97,6 +95,8 @@ body {
 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* =========================
