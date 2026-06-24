@@ -1,37 +1,73 @@
-import { Mail, MapPin, Globe } from 'lucide-react';
+import { Mail, MapPin, Globe, MessageSquare, Bug, HelpCircle } from 'lucide-react';
 
 export default function ContactPage() {
   return (
-    <div className="container mx-auto py-16 px-4 max-w-3xl">
-      <h1 className="text-4xl font-black text-foreground uppercase tracking-tight mb-8">Contact</h1>
-      <div className="bg-surface border-2 border-border rounded-3xl p-8 space-y-8">
-        <div className="flex items-start gap-4">
-          <div className="bg-scout-green p-3 rounded-2xl text-white">
-            <Mail size={24} />
-          </div>
-          <div>
-            <h3 className="text-lg font-black text-foreground uppercase tracking-wider mb-1">Email</h3>
-            <p className="text-muted font-bold">support@lodgemastercompanion.example.com</p>
+    <div className="container mx-auto py-16 px-4 max-w-5xl">
+      <div className="grid lg:grid-cols-3 gap-12">
+        <div className="lg:col-span-1">
+          <h1 className="text-4xl font-black text-foreground uppercase tracking-tight mb-6">Contact Us</h1>
+          <p className="text-lg text-muted font-bold mb-8">
+            Have questions or need assistance? We're here to help the Order of the Arrow community.
+          </p>
+
+          <div className="space-y-6">
+            <div className="flex items-start gap-4">
+              <div className="bg-scout-green p-3 rounded-2xl text-white shrink-0">
+                <Mail size={24} />
+              </div>
+              <div>
+                <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-1">Email</h3>
+                <p className="text-muted font-bold break-all">support@lodgemastercompanion.example.com</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="bg-scout-green p-3 rounded-2xl text-white shrink-0">
+                <MapPin size={24} />
+              </div>
+              <div>
+                <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-1">Organization</h3>
+                <p className="text-muted font-bold">Volunteer Development Team<br />Section NE-1, Order of the Arrow</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="bg-scout-green p-3 rounded-2xl text-white shrink-0">
+                <Globe size={24} />
+              </div>
+              <div>
+                <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-1">Open Source</h3>
+                <p className="text-muted font-bold">github.com/lodgemaster-companion</p>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="flex items-start gap-4">
-          <div className="bg-scout-green p-3 rounded-2xl text-white">
-            <MapPin size={24} />
-          </div>
-          <div>
-            <h3 className="text-lg font-black text-foreground uppercase tracking-wider mb-1">Location</h3>
-            <p className="text-muted font-bold">Lodge Headquarters - Section NE-1</p>
-          </div>
-        </div>
+        <div className="lg:col-span-2">
+          <div className="bg-surface border-2 border-border rounded-3xl p-8 md:p-12">
+            <h2 className="text-2xl font-black text-foreground uppercase tracking-tight mb-8">Get In Touch</h2>
 
-        <div className="flex items-start gap-4">
-          <div className="bg-scout-green p-3 rounded-2xl text-white">
-            <Globe size={24} />
-          </div>
-          <div>
-            <h3 className="text-lg font-black text-foreground uppercase tracking-wider mb-1">Github</h3>
-            <p className="text-muted font-bold">github.com/lodgemaster-companion</p>
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
+              <div className="p-6 bg-background border border-border rounded-2xl hover:border-scout-green transition-colors group cursor-pointer">
+                <Bug className="text-scout-green mb-4 group-hover:scale-110 transition-transform" size={32} />
+                <h3 className="font-black text-foreground uppercase tracking-wider mb-2">Report a Bug</h3>
+                <p className="text-sm text-muted font-bold">Found an issue with check-ins or exports? Let us know.</p>
+              </div>
+              <div className="p-6 bg-background border border-border rounded-2xl hover:border-scout-green transition-colors group cursor-pointer">
+                <HelpCircle className="text-scout-green mb-4 group-hover:scale-110 transition-transform" size={32} />
+                <h3 className="font-black text-foreground uppercase tracking-wider mb-2">Feature Request</h3>
+                <p className="text-sm text-muted font-bold">Have an idea to make the companion even better?</p>
+              </div>
+              <div className="p-6 bg-background border border-border rounded-2xl hover:border-scout-green transition-colors group cursor-pointer md:col-span-2">
+                <MessageSquare className="text-scout-green mb-4 group-hover:scale-110 transition-transform" size={32} />
+                <h3 className="font-black text-foreground uppercase tracking-wider mb-2">General Support</h3>
+                <p className="text-sm text-muted font-bold">Need help with setup, ingestion, or LodgeMaster reporting?</p>
+              </div>
+            </div>
+
+            <p className="text-center text-xs text-muted font-black uppercase tracking-widest">
+              Our volunteer team typically responds within 48 hours.
+            </p>
           </div>
         </div>
       </div>
