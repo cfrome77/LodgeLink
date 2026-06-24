@@ -1,37 +1,71 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* =========================
+   DESIGN TOKENS (Tailwind v4)
+========================= */
+@theme {
+  /* =========================
+     BASE SURFACES
+  ========================= */
+  --color-background: #0b0f0c;
+  --color-surface: #121814;
+  --color-surface-2: #1a231d;
+  --color-border: #232a25;
+
+  /* text */
+  --color-foreground: #e6e6e6;
+  --color-muted: #a3a3a3;
+
+  /* =========================
+     BRAND (ONLY PRIMARY ACTION)
+  ========================= */
+  --color-primary: #2d522d;
+  --color-primary-hover: #3a6b3a;
+  --color-primary-dark: #1b331b;
+
+  /* =========================
+     ACCENTS (LIMITED USE)
+  ========================= */
+  --color-oa-red: #e41e26;
+
+  /* optional supporting tone */
+  --color-khaki: #f3efe0;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-
-  --color-scout-green: #2D522D;
-  --color-scout-green-light: #4A704A;
-  --color-scout-green-dark: #1B331B;
-  --color-oa-red: #E41E26;
-  --color-khaki: #F3EFE0;
-  --color-khaki-dark: #D7CBA1;
-}
-
+/* =========================
+   DARK MODE
+========================= */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  @theme {
+    --color-background: #0a0a0a;
+    --color-foreground: #ededed;
   }
 }
 
+/* =========================
+   BASE LAYOUT
+========================= */
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  height: 100%;
 }
 
+body {
+  margin: 0;
+  padding: 0;
+
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+
+  font-family: var(--font-sans, Arial, Helvetica, sans-serif);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* =========================
+   CUSTOM SCROLLBAR
+========================= */
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px;
 }
@@ -50,12 +84,16 @@ body {
   background: #9ca3af;
 }
 
-/* Firefox */
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: #d1d5db #f1f1f1;
 }
 
-@utility pb-safe-area {
-  padding-bottom: env(safe-area-inset-bottom);
+/* =========================
+   SAFE AREA UTILITY
+========================= */
+@layer utilities {
+  .pb-safe-area {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
