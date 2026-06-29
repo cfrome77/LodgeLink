@@ -6,7 +6,7 @@ import { AttendeeSchema, AttendeeFormValues } from '@/lib/validation/schemas';
 import { X, Save, User, CreditCard, ClipboardCheck, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PREDEFINED_ROLES, PAYMENT_METHODS } from '@/lib/constants';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Event } from '@/types/event';
 import { db } from '@/lib/storage/db';
 import { Member } from '@/types/member';
@@ -23,6 +23,20 @@ interface AttendeeFormProps {
 export default function AttendeeForm({ eventId, event, onClose, onSubmit, initialData, title }: AttendeeFormProps) {
   const [suggestions, setSuggestions] = useState<Member[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const suggestionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (suggestionRef.current && !suggestionRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const {
     register,
@@ -43,8 +57,8 @@ export default function AttendeeForm({ eventId, event, onClose, onSubmit, initia
       isWalkIn: initialData?.isWalkIn || false,
       isImported: initialData?.isImported || false,
       role: initialData?.role || '',
-      checkInDate: initialData?.checkInDate || (event.startDate ? event.startDate + 'T09:00' : ''),
-      checkOutDate: initialData?.checkOutDate || (event.endDate ? event.endDate + 'T17:00' : ''),
+      checkInDate: initialData?.checkInDate || event.startDate || '',
+      checkOutDate: initialData?.checkOutDate || event.endDate || '',
       service: initialData?.service || 0,
       ordeal: initialData?.ordeal || false,
       brotherhood: initialData?.brotherhood || false,
@@ -74,9 +88,12 @@ export default function AttendeeForm({ eventId, event, onClose, onSubmit, initia
         const results = await db.members.toArray();
         const filtered = results.filter(a => {
           if (!a.isActive) return false;
-          const matches = (firstName && a.firstName.toLowerCase().startsWith(firstName.toLowerCase())) ||
-                        (lastName && a.lastName.toLowerCase().startsWith(lastName.toLowerCase()));
-          return matches;
+
+          if (lastName && lastName.length > 0) {
+            return a.lastName.toLowerCase().startsWith(lastName.toLowerCase());
+          }
+
+          return a.firstName.toLowerCase().startsWith(firstName.toLowerCase());
         }).slice(0, 5);
 
         setSuggestions(filtered);
@@ -180,7 +197,7 @@ export default function AttendeeForm({ eventId, event, onClose, onSubmit, initia
                 />
 
                 {showSuggestions && (
-                  <div className="absolute z-10 left-0 right-0 mt-1 bg-white border-2 border-gray-100 rounded-xl shadow-xl overflow-hidden">
+                  <div ref={suggestionRef} className="absolute z-20 left-0 right-0 mt-1 bg-white border-2 border-gray-100 rounded-xl shadow-xl overflow-hidden">
                     {suggestions.map((a) => (
                       <button
                         key={a.id}
@@ -334,13 +351,13 @@ export default function AttendeeForm({ eventId, event, onClose, onSubmit, initia
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className={labelClass}>Check-in Time *</label>
-                <input type="datetime-local" {...register('checkInDate')} className={cn(inputClass, errors.checkInDate && "border-red-500 bg-red-50")} />
+                <label className={labelClass}>Check-in Date *</label>
+                <input type="date" {...register('checkInDate')} className={cn(inputClass, errors.checkInDate && "border-red-500 bg-red-50")} />
                 {errors.checkInDate && <p className="mt-1 text-[10px] font-bold text-red-600 ml-1 uppercase">{errors.checkInDate.message}</p>}
               </div>
               <div>
-                <label className={labelClass}>Check-out Time *</label>
-                <input type="datetime-local" {...register('checkOutDate')} className={cn(inputClass, errors.checkOutDate && "border-red-500 bg-red-50")} />
+                <label className={labelClass}>Check-out Date *</label>
+                <input type="date" {...register('checkOutDate')} className={cn(inputClass, errors.checkOutDate && "border-red-500 bg-red-50")} />
                 {errors.checkOutDate && <p className="mt-1 text-[10px] font-bold text-red-600 ml-1 uppercase">{errors.checkOutDate.message}</p>}
               </div>
               <div>

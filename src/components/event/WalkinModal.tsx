@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AttendeeSchema, AttendeeFormValues } from '@/lib/validation/schemas';
 import { X, Save, UserPlus } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Attendee } from '@/types/attendee';
 import { Member } from '@/types/member';
 import { Event as EventType } from '@/types/event';
@@ -20,6 +20,20 @@ interface WalkinModalProps {
 export default function WalkinModal({ eventId, event, onClose, onSubmit }: WalkinModalProps) {
   const [suggestions, setSuggestions] = useState<Member[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const suggestionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (suggestionRef.current && !suggestionRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const {
     register,
@@ -35,8 +49,8 @@ export default function WalkinModal({ eventId, event, onClose, onSubmit }: Walki
       lastName: '',
       memberId: '',
       status: 'present',
-      checkInDate: event.startDate ? event.startDate + 'T09:00' : new Date().toISOString().slice(0, 16),
-      checkOutDate: event.endDate ? event.endDate + 'T17:00' : new Date().toISOString().slice(0, 16),
+      checkInDate: event.startDate || new Date().toISOString().split('T')[0],
+      checkOutDate: event.endDate || new Date().toISOString().split('T')[0],
       notes: 'Walk-in attendee',
       isWalkIn: true,
       isImported: false,
@@ -62,9 +76,12 @@ export default function WalkinModal({ eventId, event, onClose, onSubmit }: Walki
         // Filter
         const filtered = results.filter(a => {
           if (!a.isActive) return false;
-          const matches = (firstName && a.firstName.toLowerCase().startsWith(firstName.toLowerCase())) ||
-                        (lastName && a.lastName.toLowerCase().startsWith(lastName.toLowerCase()));
-          return matches;
+
+          if (lastName && lastName.length > 0) {
+            return a.lastName.toLowerCase().startsWith(lastName.toLowerCase());
+          }
+
+          return a.firstName.toLowerCase().startsWith(firstName.toLowerCase());
         }).slice(0, 5);
 
         setSuggestions(filtered);
@@ -144,7 +161,7 @@ export default function WalkinModal({ eventId, event, onClose, onSubmit }: Walki
               />
 
               {showSuggestions && (
-                <div className="absolute z-10 left-0 right-0 mt-1 bg-white border-2 border-gray-100 rounded-xl shadow-xl overflow-hidden">
+                <div ref={suggestionRef} className="absolute z-20 left-0 right-0 mt-1 bg-white border-2 border-gray-100 rounded-xl shadow-xl overflow-hidden">
                   {suggestions.map((a) => (
                     <button
                       key={a.id}

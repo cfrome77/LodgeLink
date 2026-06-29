@@ -31,8 +31,8 @@ export const AttendeeSchema = z.object({
 
   // New Fields
   role: z.string().optional().or(z.literal('')),
-  checkInDate: z.string().min(1, 'Check-in time is required'),
-  checkOutDate: z.string().min(1, 'Check-out time is required'),
+  checkInDate: z.string().min(1, 'Check-in date is required'),
+  checkOutDate: z.string().min(1, 'Check-out date is required'),
   service: z.number().optional(),
   ordeal: z.boolean(),
   brotherhood: z.boolean(),
