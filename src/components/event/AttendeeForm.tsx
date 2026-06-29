@@ -6,17 +6,38 @@ import { AttendeeSchema, AttendeeFormValues } from '@/lib/validation/schemas';
 import { X, Save, User, CreditCard, ClipboardCheck, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PREDEFINED_ROLES, PAYMENT_METHODS } from '@/lib/constants';
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { Event } from '@/types/event';
+import { db } from '@/lib/storage/db';
+import { Member } from '@/types/member';
 
 interface AttendeeFormProps {
   eventId: number;
+  event: Event;
   onClose: () => void;
   onSubmit: (data: AttendeeFormValues) => void;
-  initialData?: Partial<AttendeeFormValues>;
+  initialData?: Partial<AttendeeFormValues> & { id?: number };
   title: string;
 }
 
-export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, title }: AttendeeFormProps) {
+export default function AttendeeForm({ eventId, event, onClose, onSubmit, initialData, title }: AttendeeFormProps) {
+  const [suggestions, setSuggestions] = useState<Member[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const suggestionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (suggestionRef.current && !suggestionRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const {
     register,
     handleSubmit,
@@ -36,8 +57,8 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
       isWalkIn: initialData?.isWalkIn || false,
       isImported: initialData?.isImported || false,
       role: initialData?.role || '',
-      checkInDate: initialData?.checkInDate || '',
-      checkOutDate: initialData?.checkOutDate || '',
+      checkInDate: initialData?.checkInDate || event.startDate || '',
+      checkOutDate: initialData?.checkOutDate || event.endDate || '',
       service: initialData?.service || 0,
       ordeal: initialData?.ordeal || false,
       brotherhood: initialData?.brotherhood || false,
@@ -48,11 +69,52 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
       dateRegistered: initialData?.dateRegistered || '',
       datePaid: initialData?.datePaid || '',
       healthForm: initialData?.healthForm || false,
+      isActive: initialData?.isActive !== undefined ? initialData.isActive : true,
     },
   });
 
   const ordeal = watch('ordeal');
   const brotherhood = watch('brotherhood');
+  const firstName = watch('firstName');
+  const lastName = watch('lastName');
+
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      // Only suggest if we're adding a NEW attendee (not editing an existing one with data)
+      // Check for firstName/lastName in initialData as a proxy for "editing"
+      if (initialData?.firstName || initialData?.lastName) return;
+
+      if ((firstName && firstName.length > 1) || (lastName && lastName.length > 1)) {
+        const results = await db.members.toArray();
+        const filtered = results.filter(a => {
+          if (!a.isActive) return false;
+
+          if (lastName && lastName.length > 0) {
+            return a.lastName.toLowerCase().startsWith(lastName.toLowerCase());
+          }
+
+          return a.firstName.toLowerCase().startsWith(firstName.toLowerCase());
+        }).slice(0, 5);
+
+        setSuggestions(filtered);
+        setShowSuggestions(filtered.length > 0);
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    };
+
+    fetchSuggestions();
+  }, [firstName, lastName, initialData]);
+
+  const selectSuggestion = (a: Member) => {
+    setValue('firstName', a.firstName);
+    setValue('lastName', a.lastName);
+    setValue('middleName', a.middleName || '');
+    setValue('memberId', a.memberId || '');
+    setValue('role', a.role || '');
+    setShowSuggestions(false);
+  };
 
   // Mutual exclusivity for Ordeal and Brotherhood
   useEffect(() => {
@@ -72,6 +134,57 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
     const checked = e.target.checked;
     setValue('brotherhood', checked);
     if (checked) setValue('ordeal', false);
+  };
+
+  const syncToMemberTable = async (data: AttendeeFormValues) => {
+    try {
+      const existing = await db.members.where('memberId').equals(data.memberId).first();
+      const memberData = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        middleName: data.middleName,
+        memberId: data.memberId,
+        role: data.role,
+        isActive: data.isActive !== undefined ? data.isActive : true,
+      };
+
+      if (existing) {
+        await db.members.update(existing.id!, memberData);
+      } else {
+        await db.members.add(memberData);
+      }
+    } catch (error) {
+      console.error('Failed to sync to member table:', error);
+    }
+  };
+
+  const handleFormSubmit = async (data: AttendeeFormValues) => {
+    // 1. Check for Duplicate Member ID
+    const existingById = await db.attendees
+      .where('[eventId+memberId]')
+      .equals([eventId, data.memberId])
+      .first();
+
+    if (existingById && existingById.id !== initialData?.id) {
+      alert(`This person (Member ID: ${data.memberId}) is already registered for this event.`);
+      return;
+    }
+
+    // 2. Check for Duplicate Name (Case-insensitive)
+    const eventAttendees = await db.attendees.where('eventId').equals(eventId).toArray();
+    const duplicateName = eventAttendees.find(a =>
+      a.id !== initialData?.id &&
+      a.firstName.toLowerCase() === data.firstName.toLowerCase() &&
+      a.lastName.toLowerCase() === data.lastName.toLowerCase()
+    );
+
+    if (duplicateName) {
+      alert(`Someone named "${data.firstName} ${data.lastName}" is already registered for this event.`);
+      return;
+    }
+
+    await syncToMemberTable(data);
+    onSubmit(data);
   };
 
   const sectionLabelClass = "flex items-center gap-2 text-xs font-black text-gray-400 uppercase tracking-widest mb-4 mt-2";
@@ -97,9 +210,34 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
               <span>Personal Information</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
+              <div className="relative">
                 <label htmlFor="firstName" className={labelClass}>First Name *</label>
-                <input id="firstName" {...register('firstName')} className={cn(inputClass, errors.firstName && "border-red-500 bg-red-50")} />
+                <input
+                  id="firstName"
+                  {...register('firstName')}
+                  autoComplete="off"
+                  className={cn(inputClass, errors.firstName && "border-red-500 bg-red-50")}
+                  onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+                />
+
+                {showSuggestions && (
+                  <div ref={suggestionRef} className="absolute z-20 left-0 right-0 mt-1 bg-white border-2 border-gray-100 rounded-xl shadow-xl overflow-hidden">
+                    {suggestions.map((a) => (
+                      <button
+                        key={a.id}
+                        type="button"
+                        onClick={() => selectSuggestion(a)}
+                        className="w-full text-left px-4 py-3 hover:bg-khaki/30 border-b border-gray-50 last:border-0 transition-colors flex justify-between items-center"
+                      >
+                        <div>
+                          <div className="font-bold text-gray-900">{a.firstName} {a.lastName}</div>
+                          <div className="text-[10px] text-gray-500 uppercase font-black">{a.memberId}</div>
+                        </div>
+                        <div className="text-[10px] bg-scout-green/10 text-scout-green px-2 py-1 rounded-full font-black uppercase">Recent</div>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
               <div>
                 <label htmlFor="middleName" className={labelClass}>Middle Name</label>
@@ -107,7 +245,13 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
               </div>
               <div>
                 <label htmlFor="lastName" className={labelClass}>Last Name *</label>
-                <input id="lastName" {...register('lastName')} className={cn(inputClass, errors.lastName && "border-red-500 bg-red-50")} />
+                <input
+                  id="lastName"
+                  {...register('lastName')}
+                  autoComplete="off"
+                  className={cn(inputClass, errors.lastName && "border-red-500 bg-red-50")}
+                  onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+                />
               </div>
               <div>
                 <label htmlFor="memberId" className={labelClass}>Member ID *</label>
@@ -231,13 +375,13 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className={labelClass}>Check-in Time *</label>
-                <input type="datetime-local" {...register('checkInDate')} className={cn(inputClass, errors.checkInDate && "border-red-500 bg-red-50")} />
+                <label className={labelClass}>Check-in Date *</label>
+                <input type="date" {...register('checkInDate')} className={cn(inputClass, errors.checkInDate && "border-red-500 bg-red-50")} />
                 {errors.checkInDate && <p className="mt-1 text-[10px] font-bold text-red-600 ml-1 uppercase">{errors.checkInDate.message}</p>}
               </div>
               <div>
-                <label className={labelClass}>Check-out Time *</label>
-                <input type="datetime-local" {...register('checkOutDate')} className={cn(inputClass, errors.checkOutDate && "border-red-500 bg-red-50")} />
+                <label className={labelClass}>Check-out Date *</label>
+                <input type="date" {...register('checkOutDate')} className={cn(inputClass, errors.checkOutDate && "border-red-500 bg-red-50")} />
                 {errors.checkOutDate && <p className="mt-1 text-[10px] font-bold text-red-600 ml-1 uppercase">{errors.checkOutDate.message}</p>}
               </div>
               <div>
@@ -261,9 +405,15 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
             />
           </section>
 
-          <div className="flex items-center gap-3">
-            <input type="checkbox" id="isWalkIn" {...register('isWalkIn')} className="rounded text-scout-green" />
-            <label htmlFor="isWalkIn" className="text-sm font-bold text-gray-700 uppercase tracking-widest">Mark as Walk-in</label>
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <input type="checkbox" id="isWalkIn" {...register('isWalkIn')} className="rounded text-scout-green" />
+              <label htmlFor="isWalkIn" className="text-sm font-bold text-gray-700 uppercase tracking-widest">Mark as Walk-in</label>
+            </div>
+            <div className="flex items-center gap-3">
+              <input type="checkbox" id="isActive" {...register('isActive')} className="rounded text-scout-green" />
+              <label htmlFor="isActive" className="text-sm font-bold text-gray-700 uppercase tracking-widest">Active Member (Show in suggestions)</label>
+            </div>
           </div>
         </form>
 
@@ -276,7 +426,7 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
             Cancel
           </button>
           <button
-            onClick={handleSubmit(onSubmit)}
+            onClick={handleSubmit(handleFormSubmit)}
             className="flex items-center gap-2 bg-scout-green hover:bg-scout-green-dark text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm shadow-lg shadow-scout-green/20 active:scale-95 transition-all"
           >
             <Save size={20} />

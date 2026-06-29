@@ -1,22 +1,25 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Upload, FileText, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
+import { Upload, FileText, AlertCircle, CheckCircle2, Loader2, Lock } from 'lucide-react';
 import { parseBlackPugCSV } from '@/lib/ingestion/blackpug';
 import { db } from '@/lib/storage/db';
+import { Event } from '@/types/event';
 
 interface CSVImporterProps {
   eventId: number;
+  event: Event;
 }
 
-export default function CSVImporter({ eventId }: CSVImporterProps) {
+export default function CSVImporter({ eventId, event }: CSVImporterProps) {
   const [isImporting, setIsImporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.isLocked) return;
+    const file = e.target.files?.[0];
     if (!file) return;
 
     setIsImporting(true);
@@ -27,7 +30,7 @@ export default function CSVImporter({ eventId }: CSVImporterProps) {
     reader.onload = async (e) => {
       try {
         const content = e.target?.result as string;
-        const importedAttendees = parseBlackPugCSV(content, eventId);
+        const importedAttendees = parseBlackPugCSV(content, eventId, event);
 
         if (importedAttendees.length === 0) {
           throw new Error('No valid attendees found in the CSV.');
@@ -37,12 +40,37 @@ export default function CSVImporter({ eventId }: CSVImporterProps) {
         const existingAttendees = await db.attendees.where('eventId').equals(eventId).toArray();
         const existingKeys = new Set(existingAttendees.map(a => `${a.firstName.toLowerCase()}|${a.lastName.toLowerCase()}`));
 
-        const newAttendees = importedAttendees.filter(a =>
-          !existingKeys.has(`${a.firstName.toLowerCase()}|${a.lastName.toLowerCase()}`)
-        );
+        const existingMemberIds = new Set(existingAttendees.filter(a => !!a.memberId).map(a => a.memberId));
+
+        const newAttendees = importedAttendees.filter(a => {
+          const nameKey = `${a.firstName.toLowerCase()}|${a.lastName.toLowerCase()}`;
+          if (existingKeys.has(nameKey)) return false;
+          if (a.memberId && existingMemberIds.has(a.memberId)) return false;
+          return true;
+        });
 
         if (newAttendees.length > 0) {
           await db.attendees.bulkAdd(newAttendees);
+
+          // Also sync to members table
+          for (const a of newAttendees) {
+            if (a.memberId) {
+              const existing = await db.members.where('memberId').equals(a.memberId).first();
+              const memberData = {
+                firstName: a.firstName,
+                lastName: a.lastName,
+                middleName: a.middleName,
+                memberId: a.memberId,
+                role: a.role,
+                isActive: true,
+              };
+              if (existing) {
+                await db.members.update(existing.id!, memberData);
+              } else {
+                await db.members.add(memberData);
+              }
+            }
+          }
         }
 
         setSuccess(newAttendees.length);
@@ -75,9 +103,11 @@ export default function CSVImporter({ eventId }: CSVImporterProps) {
       </div>
 
       <div
-        onClick={() => fileInputRef.current?.click()}
-        className={`border-2 border-dashed rounded-3xl p-12 text-center cursor-pointer transition-all ${
-          isImporting ? 'bg-khaki/10 border-khaki-dark' : 'hover:bg-khaki/30 hover:border-scout-green border-khaki-dark'
+        onClick={() => !event.isLocked && fileInputRef.current?.click()}
+        className={`border-2 border-dashed rounded-3xl p-12 text-center transition-all ${
+          event.isLocked
+            ? 'bg-gray-50 border-gray-200 cursor-not-allowed'
+            : isImporting ? 'bg-khaki/10 border-khaki-dark cursor-pointer' : 'hover:bg-khaki/30 hover:border-scout-green border-khaki-dark cursor-pointer'
         }`}
       >
         <input
@@ -87,7 +117,13 @@ export default function CSVImporter({ eventId }: CSVImporterProps) {
           accept=".csv"
           className="hidden"
         />
-        {isImporting ? (
+        {event.isLocked ? (
+          <div className="flex flex-col items-center">
+            <Lock size={40} className="text-gray-300 mb-2" />
+            <p className="text-gray-500 font-black uppercase tracking-widest text-xs">Event Locked</p>
+            <p className="text-[10px] text-gray-400 mt-1">Unlock the event to import more data</p>
+          </div>
+        ) : isImporting ? (
           <div className="flex flex-col items-center">
             <Loader2 size={40} className="text-scout-green animate-spin mb-2" />
             <p className="text-gray-600 font-black uppercase tracking-widest text-xs">Processing CSV...</p>

@@ -4,17 +4,42 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AttendeeSchema, AttendeeFormValues } from '@/lib/validation/schemas';
 import { X, Save, UserPlus } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Attendee } from '@/types/attendee';
+import { Member } from '@/types/member';
+import { Event as EventType } from '@/types/event';
+import { db } from '@/lib/storage/db';
 
 interface WalkinModalProps {
   eventId: number;
+  event: EventType;
   onClose: () => void;
   onSubmit: (data: AttendeeFormValues) => void;
 }
 
-export default function WalkinModal({ eventId, onClose, onSubmit }: WalkinModalProps) {
+export default function WalkinModal({ eventId, event, onClose, onSubmit }: WalkinModalProps) {
+  const [suggestions, setSuggestions] = useState<Member[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const suggestionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (suggestionRef.current && !suggestionRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<AttendeeFormValues>({
     resolver: zodResolver(AttendeeSchema),
@@ -24,8 +49,8 @@ export default function WalkinModal({ eventId, onClose, onSubmit }: WalkinModalP
       lastName: '',
       memberId: '',
       status: 'present',
-      checkInDate: new Date().toISOString().slice(0, 16),
-      checkOutDate: new Date().toISOString().slice(0, 16),
+      checkInDate: event.startDate || new Date().toISOString().split('T')[0],
+      checkOutDate: event.endDate || new Date().toISOString().split('T')[0],
       notes: 'Walk-in attendee',
       isWalkIn: true,
       isImported: false,
@@ -35,8 +60,99 @@ export default function WalkinModal({ eventId, onClose, onSubmit }: WalkinModalP
       brotherhood: false,
       healthForm: false,
       service: 0,
+      isActive: true,
     },
   });
+
+  const firstName = watch('firstName');
+  const lastName = watch('lastName');
+
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      if ((firstName && firstName.length > 1) || (lastName && lastName.length > 1)) {
+        const results = await db.members
+          .toArray();
+
+        // Filter
+        const filtered = results.filter(a => {
+          if (!a.isActive) return false;
+
+          if (lastName && lastName.length > 0) {
+            return a.lastName.toLowerCase().startsWith(lastName.toLowerCase());
+          }
+
+          return a.firstName.toLowerCase().startsWith(firstName.toLowerCase());
+        }).slice(0, 5);
+
+        setSuggestions(filtered);
+        setShowSuggestions(filtered.length > 0);
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    };
+
+    fetchSuggestions();
+  }, [firstName, lastName]);
+
+  const selectSuggestion = (a: Member) => {
+    setValue('firstName', a.firstName);
+    setValue('lastName', a.lastName);
+    setValue('middleName', a.middleName || '');
+    setValue('memberId', a.memberId || '');
+    setValue('role', a.role || '');
+    setShowSuggestions(false);
+  };
+
+  const syncToMemberTable = async (data: AttendeeFormValues) => {
+    try {
+      const existing = await db.members.where('memberId').equals(data.memberId).first();
+      const memberData = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        middleName: data.middleName,
+        memberId: data.memberId,
+        role: data.role,
+        isActive: data.isActive !== undefined ? data.isActive : true,
+      };
+
+      if (existing) {
+        await db.members.update(existing.id!, memberData);
+      } else {
+        await db.members.add(memberData);
+      }
+    } catch (error) {
+      console.error('Failed to sync to member table:', error);
+    }
+  };
+
+  const handleFormSubmit = async (data: AttendeeFormValues) => {
+    // 1. Check for Duplicate Member ID
+    const existingById = await db.attendees
+      .where('[eventId+memberId]')
+      .equals([eventId, data.memberId])
+      .first();
+
+    if (existingById) {
+      alert(`This person (Member ID: ${data.memberId}) is already registered for this event.`);
+      return;
+    }
+
+    // 2. Check for Duplicate Name (Case-insensitive)
+    const eventAttendees = await db.attendees.where('eventId').equals(eventId).toArray();
+    const duplicateName = eventAttendees.find(a =>
+      a.firstName.toLowerCase() === data.firstName.toLowerCase() &&
+      a.lastName.toLowerCase() === data.lastName.toLowerCase()
+    );
+
+    if (duplicateName) {
+      alert(`Someone named "${data.firstName} ${data.lastName}" is already registered for this event.`);
+      return;
+    }
+
+    await syncToMemberTable(data);
+    onSubmit(data);
+  };
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-0 sm:p-4 animate-in fade-in duration-200">
@@ -53,17 +169,38 @@ export default function WalkinModal({ eventId, onClose, onSubmit }: WalkinModalP
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6 space-y-6">
           <div className="space-y-4">
-            <div>
+            <div className="relative">
               <label htmlFor="firstName" className="block text-sm font-black text-gray-700 uppercase tracking-wider mb-1">First Name *</label>
               <input
                 {...register('firstName')}
                 id="firstName"
                 autoFocus
+                autoComplete="off"
                 placeholder="Required"
                 className={`w-full px-4 py-4 text-lg border-2 rounded-xl outline-none focus:ring-4 focus:ring-scout-green/10 transition-all ${errors.firstName ? 'border-red-500 bg-red-50' : 'border-gray-200 focus:border-scout-green'}`}
+                onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
               />
+
+              {showSuggestions && (
+                <div ref={suggestionRef} className="absolute z-20 left-0 right-0 mt-1 bg-white border-2 border-gray-100 rounded-xl shadow-xl overflow-hidden">
+                  {suggestions.map((a) => (
+                    <button
+                      key={a.id}
+                      type="button"
+                      onClick={() => selectSuggestion(a)}
+                      className="w-full text-left px-4 py-3 hover:bg-khaki/30 border-b border-gray-50 last:border-0 transition-colors flex justify-between items-center"
+                    >
+                      <div>
+                        <div className="font-bold text-gray-900">{a.firstName} {a.lastName}</div>
+                        <div className="text-[10px] text-gray-500 uppercase font-black">{a.memberId}</div>
+                      </div>
+                      <div className="text-[10px] bg-scout-green/10 text-scout-green px-2 py-1 rounded-full font-black uppercase">Recent</div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             <div>
               <label htmlFor="lastName" className="block text-sm font-black text-gray-700 uppercase tracking-wider mb-1">Last Name *</label>
