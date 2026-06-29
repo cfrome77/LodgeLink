@@ -16,7 +16,7 @@ interface AttendeeFormProps {
   event: Event;
   onClose: () => void;
   onSubmit: (data: AttendeeFormValues) => void;
-  initialData?: Partial<AttendeeFormValues>;
+  initialData?: Partial<AttendeeFormValues> & { id?: number };
   title: string;
 }
 
