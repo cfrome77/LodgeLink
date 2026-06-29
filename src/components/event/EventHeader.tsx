@@ -79,10 +79,10 @@ export default function EventHeader({ event, totalAttendees }: EventHeaderProps)
                   <span>
                     {event.startDate && event.endDate ? (
                       <>
-                        {format(new Date(event.startDate), 'MMM d, h:mm a')} - {format(new Date(event.endDate), 'MMM d, h:mm a')}
+                        {format(new Date(event.startDate + 'T00:00:00'), 'MMM d, yyyy')} - {format(new Date(event.endDate + 'T00:00:00'), 'MMM d, yyyy')}
                       </>
                     ) : (
-                      format(new Date(event.date), 'MMM d, yyyy')
+                      'No date set'
                     )}
                   </span>
                 </div>

@@ -22,9 +22,8 @@ export default function EventForm({ initialData, onSubmit, onCancel, title, isSu
     resolver: zodResolver(EventSchema),
     defaultValues: {
       name: initialData?.name || '',
-      date: initialData?.date || new Date().toISOString().split('T')[0],
-      startDate: initialData?.startDate || new Date().toISOString().slice(0, 16),
-      endDate: initialData?.endDate || new Date().toISOString().slice(0, 16),
+      startDate: initialData?.startDate || new Date().toISOString().split('T')[0],
+      endDate: initialData?.endDate || new Date().toISOString().split('T')[0],
       chapter: initialData?.chapter || '',
     },
   });
@@ -66,11 +65,11 @@ export default function EventForm({ initialData, onSubmit, onCancel, title, isSu
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label htmlFor="startDate" className="block text-xs font-black text-muted uppercase tracking-widest mb-2 ml-1">
-                Start Date/Time *
+                Start Date *
               </label>
               <input
                 {...register('startDate')}
-                type="datetime-local"
+                type="date"
                 id="startDate"
                 className={`w-full px-5 py-4 bg-surface border-2 rounded-2xl outline-none focus:ring-4 focus:ring-scout-green/10 transition-all font-bold text-foreground ${
                   errors.startDate ? 'border-oa-red bg-oa-red/5 focus:border-oa-red' : 'border-border focus:border-scout-green'
@@ -83,11 +82,11 @@ export default function EventForm({ initialData, onSubmit, onCancel, title, isSu
 
             <div>
               <label htmlFor="endDate" className="block text-xs font-black text-muted uppercase tracking-widest mb-2 ml-1">
-                End Date/Time *
+                End Date *
               </label>
               <input
                 {...register('endDate')}
-                type="datetime-local"
+                type="date"
                 id="endDate"
                 className={`w-full px-5 py-4 bg-surface border-2 rounded-2xl outline-none focus:ring-4 focus:ring-scout-green/10 transition-all font-bold text-foreground ${
                   errors.endDate ? 'border-oa-red bg-oa-red/5 focus:border-oa-red' : 'border-border focus:border-scout-green'
@@ -97,23 +96,6 @@ export default function EventForm({ initialData, onSubmit, onCancel, title, isSu
                 <p className="mt-2 text-sm font-bold text-oa-red ml-1">{errors.endDate.message}</p>
               )}
             </div>
-          </div>
-
-          <div>
-            <label htmlFor="date" className="block text-xs font-black text-muted uppercase tracking-widest mb-2 ml-1">
-              Event Date *
-            </label>
-            <input
-              {...register('date')}
-              type="date"
-              id="date"
-              className={`w-full px-5 py-4 bg-surface border-2 rounded-2xl outline-none focus:ring-4 focus:ring-scout-green/10 transition-all font-bold text-foreground ${
-                errors.date ? 'border-oa-red bg-oa-red/5 focus:border-oa-red' : 'border-border focus:border-scout-green'
-              }`}
-            />
-            {errors.date && (
-              <p className="mt-2 text-sm font-bold text-oa-red ml-1">{errors.date.message}</p>
-            )}
           </div>
 
           <div>

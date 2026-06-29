@@ -10,8 +10,8 @@ export class LodgeMasterDatabase extends Dexie {
 
   constructor() {
     super('LodgeMasterCompanionDB');
-    this.version(5).stores({
-      events: '++id, name, date, startDate, endDate, chapter, isLocked',
+    this.version(6).stores({
+      events: '++id, name, startDate, endDate, chapter, isLocked',
       attendees: '++id, eventId, firstName, lastName, memberId, status, isWalkIn, isImported, role, paidInFull, healthForm, isActive',
       members: '++id, firstName, lastName, memberId, role, isActive'
     }).upgrade(() => {

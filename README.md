@@ -16,7 +16,10 @@ It serves as a bridge between messy on-site registration (including Black Pug im
 - **Offline First**: All data is persisted locally in your browser using IndexedDB (via Dexie.js). No internet connection is required after initial load.
 
 ### 2. Intelligent Attendee Tracking & Master List
-- **Shared Member Table (Master List)**: Permanent personal information (Name, Member ID, Role) is automatically synced to a local "Master List".
+- **Master Member List**: A dedicated "Master List" page allows you to manage your entire local membership directory.
+- **Shared Member Table**: Permanent personal information (Name, Member ID, Role) is stored once and shared across all events.
+- **Migration Tool**: Easily populate your Master List from previous events using the "Sync from Events" tool on the Master List page.
+- **Data Propagation**: Edits made to a member in the Master List can be optionally propagated to all currently unlocked events, ensuring your records stay up to date.
 - **Member Reuse**: When adding new attendees or walk-ins, the system provides instant suggestions from the Master List. Selecting a member auto-fills their personal info, saving time and reducing duplicate entry.
 - **Active/Inactive Status**: Mark members as inactive (e.g., aged out) to hide them from suggestions while keeping their historical data intact.
 - **Black Pug Ingestion**: Upload CSV files exported from Black Pug to auto-populate your attendee list and sync new members to the Master List.

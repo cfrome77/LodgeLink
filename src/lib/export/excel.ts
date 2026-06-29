@@ -46,7 +46,7 @@ function prepareExportData(event: Event, attendees: Attendee[], columns: ExportC
       } else if (col.key === 'eventName') {
         value = event.name;
       } else if (col.key === 'eventDate') {
-        value = event.date;
+        value = event.startDate || '';
       } else {
         value = a[col.key as keyof Attendee];
       }

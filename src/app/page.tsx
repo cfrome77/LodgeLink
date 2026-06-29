@@ -53,7 +53,8 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-bold text-foreground mb-1">{event.name}</h3>
               <p className="text-muted text-sm mb-4">
-                {format(new Date(event.date), 'PPPP')}
+                {event.startDate && format(new Date(event.startDate + 'T00:00:00'), 'MMM d, yyyy')}
+                {event.endDate && event.endDate !== event.startDate && ` - ${format(new Date(event.endDate + 'T00:00:00'), 'MMM d, yyyy')}`}
               </p>
               {event.chapter && (
                 <div className="flex items-center gap-2 text-sm text-muted bg-surface-muted px-3 py-1 rounded-full w-fit">

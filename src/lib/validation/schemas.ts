@@ -2,7 +2,6 @@ import { z } from 'zod';
 
 export const EventSchema = z.object({
   name: z.string().min(1, 'Event name is required'),
-  date: z.string().min(1, 'Event date is required'),
   startDate: z.string().min(1, 'Start date is required'),
   endDate: z.string().min(1, 'End date is required'),
   chapter: z.string().optional().or(z.literal('')),
