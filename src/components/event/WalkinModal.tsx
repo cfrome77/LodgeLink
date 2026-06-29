@@ -127,6 +127,29 @@ export default function WalkinModal({ eventId, event, onClose, onSubmit }: Walki
   };
 
   const handleFormSubmit = async (data: AttendeeFormValues) => {
+    // 1. Check for Duplicate Member ID
+    const existingById = await db.attendees
+      .where('[eventId+memberId]')
+      .equals([eventId, data.memberId])
+      .first();
+
+    if (existingById) {
+      alert(`This person (Member ID: ${data.memberId}) is already registered for this event.`);
+      return;
+    }
+
+    // 2. Check for Duplicate Name (Case-insensitive)
+    const eventAttendees = await db.attendees.where('eventId').equals(eventId).toArray();
+    const duplicateName = eventAttendees.find(a =>
+      a.firstName.toLowerCase() === data.firstName.toLowerCase() &&
+      a.lastName.toLowerCase() === data.lastName.toLowerCase()
+    );
+
+    if (duplicateName) {
+      alert(`Someone named "${data.firstName} ${data.lastName}" is already registered for this event.`);
+      return;
+    }
+
     await syncToMemberTable(data);
     onSubmit(data);
   };

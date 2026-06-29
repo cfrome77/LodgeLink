@@ -40,9 +40,14 @@ export default function CSVImporter({ eventId, event }: CSVImporterProps) {
         const existingAttendees = await db.attendees.where('eventId').equals(eventId).toArray();
         const existingKeys = new Set(existingAttendees.map(a => `${a.firstName.toLowerCase()}|${a.lastName.toLowerCase()}`));
 
-        const newAttendees = importedAttendees.filter(a =>
-          !existingKeys.has(`${a.firstName.toLowerCase()}|${a.lastName.toLowerCase()}`)
-        );
+        const existingMemberIds = new Set(existingAttendees.filter(a => !!a.memberId).map(a => a.memberId));
+
+        const newAttendees = importedAttendees.filter(a => {
+          const nameKey = `${a.firstName.toLowerCase()}|${a.lastName.toLowerCase()}`;
+          if (existingKeys.has(nameKey)) return false;
+          if (a.memberId && existingMemberIds.has(a.memberId)) return false;
+          return true;
+        });
 
         if (newAttendees.length > 0) {
           await db.attendees.bulkAdd(newAttendees);
