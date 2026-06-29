@@ -43,6 +43,7 @@ export default function Navbar() {
             <div className="hidden sm:flex sm:items-center sm:gap-6">
               <Link href="/" className="text-sm font-bold text-muted hover:text-scout-green transition-colors">Events</Link>
               <Link href="/members" className="text-sm font-bold text-muted hover:text-scout-green transition-colors">Master List</Link>
+              <Link href="/stats" className="text-sm font-bold text-muted hover:text-scout-green transition-colors">Stats</Link>
               <Link href="/about" className="text-sm font-bold text-muted hover:text-scout-green transition-colors">About</Link>
               <Link href="/contact" className="text-sm font-bold text-muted hover:text-scout-green transition-colors">Contact</Link>
             </div>
@@ -108,6 +109,13 @@ export default function Navbar() {
               className="block px-3 py-4 text-base font-bold text-foreground hover:bg-surface rounded-md"
             >
               Master List
+            </Link>
+            <Link
+              href="/stats"
+              onClick={() => setIsOpen(false)}
+              className="block px-3 py-4 text-base font-bold text-foreground hover:bg-surface rounded-md"
+            >
+              Stats
             </Link>
             <Link
               href="/about"
