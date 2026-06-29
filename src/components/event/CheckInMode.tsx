@@ -1,18 +1,20 @@
 'use client';
 
 import { Attendee } from '@/types/attendee';
+import { Event as EventType } from '@/types/event';
 import { db } from '@/lib/storage/db';
-import { Search, UserPlus, X } from 'lucide-react';
+import { Search, UserPlus, X, Lock } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import AttendeeCard from './AttendeeCard';
 import WalkinModal from './WalkinModal';
 
 interface CheckInModeProps {
   eventId: number;
+  event: EventType;
   attendees: Attendee[];
 }
 
-export default function CheckInMode({ eventId, attendees }: CheckInModeProps) {
+export default function CheckInMode({ eventId, event: eventData, attendees }: CheckInModeProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddingWalkIn, setIsAddingWalkIn] = useState(false);
 
@@ -28,6 +30,7 @@ export default function CheckInMode({ eventId, attendees }: CheckInModeProps) {
   }, [attendees, searchTerm]);
 
   const handleToggleStatus = async (attendee: Attendee) => {
+    if (eventData.isLocked) return;
     // Fast interaction cycle: absent -> present -> partial -> absent
     let newStatus: Attendee['status'];
     if (attendee.status === 'absent') newStatus = 'present';
@@ -99,17 +102,23 @@ export default function CheckInMode({ eventId, attendees }: CheckInModeProps) {
       {/* Floating Action Button (FAB) */}
       <div className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-6 sm:bottom-8 sm:right-8 sm:left-auto sm:translate-x-0 z-40">
         <button
-          onClick={() => setIsAddingWalkIn(true)}
-          className="flex items-center gap-3 bg-scout-green hover:bg-scout-green-dark text-white px-8 py-5 rounded-full font-black text-lg transition-all shadow-2xl active:scale-95 shadow-scout-green-dark/40"
+          onClick={() => !eventData.isLocked && setIsAddingWalkIn(true)}
+          disabled={eventData.isLocked}
+          className={`flex items-center gap-3 px-8 py-5 rounded-full font-black text-lg transition-all shadow-2xl active:scale-95 ${
+            eventData.isLocked
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none'
+              : 'bg-scout-green hover:bg-scout-green-dark text-white shadow-scout-green-dark/40'
+          }`}
         >
-          <UserPlus size={28} />
-          <span className="sm:inline">Add Walk-in</span>
+          {eventData.isLocked ? <Lock size={28} /> : <UserPlus size={28} />}
+          <span className="sm:inline">{eventData.isLocked ? 'Locked' : 'Add Walk-in'}</span>
         </button>
       </div>
 
       {isAddingWalkIn && (
         <WalkinModal
           eventId={eventId}
+          event={eventData}
           onClose={() => setIsAddingWalkIn(false)}
           onSubmit={async (data) => {
             await db.attendees.add(data);

@@ -92,7 +92,7 @@ export default function EventDetailPage() {
             {/* Content Area */}
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 pb-32">
               {activeTab === 'checkin' && (
-                <CheckInMode eventId={eventId} attendees={attendees || []} />
+                <CheckInMode eventId={eventId} event={event} attendees={attendees || []} />
               )}
 
               {activeTab === 'attendees' && (
@@ -106,7 +106,7 @@ export default function EventDetailPage() {
 
               {activeTab === 'import' && (
                 <div className="max-w-2xl mx-auto">
-                  <CSVImporter eventId={eventId} />
+                  <CSVImporter eventId={eventId} event={event} />
                 </div>
               )}
 

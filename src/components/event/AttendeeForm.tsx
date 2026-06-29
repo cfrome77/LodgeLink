@@ -7,16 +7,19 @@ import { X, Save, User, CreditCard, ClipboardCheck, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PREDEFINED_ROLES, PAYMENT_METHODS } from '@/lib/constants';
 import { useEffect } from 'react';
+import { Event } from '@/types/event';
+import { db } from '@/lib/storage/db';
 
 interface AttendeeFormProps {
   eventId: number;
+  event: Event;
   onClose: () => void;
   onSubmit: (data: AttendeeFormValues) => void;
   initialData?: Partial<AttendeeFormValues>;
   title: string;
 }
 
-export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, title }: AttendeeFormProps) {
+export default function AttendeeForm({ eventId, event, onClose, onSubmit, initialData, title }: AttendeeFormProps) {
   const {
     register,
     handleSubmit,
@@ -36,8 +39,8 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
       isWalkIn: initialData?.isWalkIn || false,
       isImported: initialData?.isImported || false,
       role: initialData?.role || '',
-      checkInDate: initialData?.checkInDate || '',
-      checkOutDate: initialData?.checkOutDate || '',
+      checkInDate: initialData?.checkInDate || event.startDate || '',
+      checkOutDate: initialData?.checkOutDate || event.endDate || '',
       service: initialData?.service || 0,
       ordeal: initialData?.ordeal || false,
       brotherhood: initialData?.brotherhood || false,
@@ -48,6 +51,7 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
       dateRegistered: initialData?.dateRegistered || '',
       datePaid: initialData?.datePaid || '',
       healthForm: initialData?.healthForm || false,
+      isActive: initialData?.isActive !== undefined ? initialData.isActive : true,
     },
   });
 
@@ -72,6 +76,33 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
     const checked = e.target.checked;
     setValue('brotherhood', checked);
     if (checked) setValue('ordeal', false);
+  };
+
+  const syncToMemberTable = async (data: AttendeeFormValues) => {
+    try {
+      const existing = await db.members.where('memberId').equals(data.memberId).first();
+      const memberData = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        middleName: data.middleName,
+        memberId: data.memberId,
+        role: data.role,
+        isActive: data.isActive !== undefined ? data.isActive : true,
+      };
+
+      if (existing) {
+        await db.members.update(existing.id!, memberData);
+      } else {
+        await db.members.add(memberData);
+      }
+    } catch (error) {
+      console.error('Failed to sync to member table:', error);
+    }
+  };
+
+  const handleFormSubmit = async (data: AttendeeFormValues) => {
+    await syncToMemberTable(data);
+    onSubmit(data);
   };
 
   const sectionLabelClass = "flex items-center gap-2 text-xs font-black text-gray-400 uppercase tracking-widest mb-4 mt-2";
@@ -261,9 +292,15 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
             />
           </section>
 
-          <div className="flex items-center gap-3">
-            <input type="checkbox" id="isWalkIn" {...register('isWalkIn')} className="rounded text-scout-green" />
-            <label htmlFor="isWalkIn" className="text-sm font-bold text-gray-700 uppercase tracking-widest">Mark as Walk-in</label>
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <input type="checkbox" id="isWalkIn" {...register('isWalkIn')} className="rounded text-scout-green" />
+              <label htmlFor="isWalkIn" className="text-sm font-bold text-gray-700 uppercase tracking-widest">Mark as Walk-in</label>
+            </div>
+            <div className="flex items-center gap-3">
+              <input type="checkbox" id="isActive" {...register('isActive')} className="rounded text-scout-green" />
+              <label htmlFor="isActive" className="text-sm font-bold text-gray-700 uppercase tracking-widest">Active Member (Show in suggestions)</label>
+            </div>
           </div>
         </form>
 
@@ -276,7 +313,7 @@ export default function AttendeeForm({ eventId, onClose, onSubmit, initialData, 
             Cancel
           </button>
           <button
-            onClick={handleSubmit(onSubmit)}
+            onClick={handleSubmit(handleFormSubmit)}
             className="flex items-center gap-2 bg-scout-green hover:bg-scout-green-dark text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-sm shadow-lg shadow-scout-green/20 active:scale-95 transition-all"
           >
             <Save size={20} />

@@ -2,9 +2,10 @@
 
 import { Attendee } from '@/types/attendee';
 import { db } from '@/lib/storage/db';
-import { Edit2, Trash2, UserPlus, Search, UserCheck, ShieldCheck, CreditCard } from 'lucide-react';
+import { Edit2, Trash2, UserPlus, Search, UserCheck, ShieldCheck, CreditCard, Lock } from 'lucide-react';
 import { useState } from 'react';
 import AttendeeForm from './AttendeeForm';
+import { useLiveQuery } from 'dexie-react-hooks';
 
 interface AttendeeListProps {
   eventId: number;
@@ -15,6 +16,8 @@ export default function AttendeeList({ eventId, attendees }: AttendeeListProps) 
   const [searchTerm, setSearchTerm] = useState('');
   const [isAdding, setIsAdding] = useState(false);
   const [editingAttendee, setEditingAttendee] = useState<Attendee | null>(null);
+
+  const event = useLiveQuery(() => db.events.get(eventId), [eventId]);
 
   const filteredAttendees = attendees.filter(a =>
     `${a.firstName} ${a.middleName || ''} ${a.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -47,10 +50,11 @@ export default function AttendeeList({ eventId, attendees }: AttendeeListProps) 
         </div>
         <button
           onClick={() => setIsAdding(true)}
-          className="inline-flex items-center gap-2 bg-scout-green hover:bg-scout-green-dark text-white px-6 py-2 rounded-xl font-black transition-all shadow-md active:scale-95 uppercase tracking-widest text-xs"
+          disabled={event?.isLocked}
+          className="inline-flex items-center gap-2 bg-scout-green hover:bg-scout-green-dark disabled:bg-gray-300 text-white px-6 py-2 rounded-xl font-black transition-all shadow-md active:scale-95 uppercase tracking-widest text-xs"
         >
-          <UserPlus size={18} />
-          <span>Add Attendee</span>
+          {event?.isLocked ? <Lock size={18} /> : <UserPlus size={18} />}
+          <span>{event?.isLocked ? 'Event Locked' : 'Add Attendee'}</span>
         </button>
       </div>
 
@@ -107,20 +111,28 @@ export default function AttendeeList({ eventId, attendees }: AttendeeListProps) 
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-2">
-                        <button
-                          onClick={() => setEditingAttendee(attendee)}
-                          className="p-2 text-gray-400 hover:text-scout-green hover:bg-khaki rounded-lg transition-all"
-                          title="Edit"
-                        >
-                          <Edit2 size={18} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(attendee.id!)}
-                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                          title="Delete"
-                        >
-                          <Trash2 size={18} />
-                        </button>
+                        {!event?.isLocked ? (
+                          <>
+                            <button
+                              onClick={() => setEditingAttendee(attendee)}
+                              className="p-2 text-gray-400 hover:text-scout-green hover:bg-khaki rounded-lg transition-all"
+                              title="Edit"
+                            >
+                              <Edit2 size={18} />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(attendee.id!)}
+                              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                              title="Delete"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          </>
+                        ) : (
+                          <div className="p-2 text-gray-300" title="Locked">
+                            <Lock size={18} />
+                          </div>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -131,9 +143,10 @@ export default function AttendeeList({ eventId, attendees }: AttendeeListProps) 
         </div>
       </div>
 
-      {isAdding && (
+      {isAdding && event && (
         <AttendeeForm
           eventId={eventId}
+          event={event}
           title="Add New Attendee"
           onClose={() => setIsAdding(false)}
           onSubmit={async (data) => {
@@ -143,9 +156,10 @@ export default function AttendeeList({ eventId, attendees }: AttendeeListProps) 
         />
       )}
 
-      {editingAttendee && (
+      {editingAttendee && event && (
         <AttendeeForm
           eventId={eventId}
+          event={event}
           title="Edit Attendee"
           initialData={editingAttendee}
           onClose={() => setEditingAttendee(null)}
