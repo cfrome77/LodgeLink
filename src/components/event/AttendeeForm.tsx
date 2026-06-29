@@ -6,9 +6,10 @@ import { AttendeeSchema, AttendeeFormValues } from '@/lib/validation/schemas';
 import { X, Save, User, CreditCard, ClipboardCheck, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PREDEFINED_ROLES, PAYMENT_METHODS } from '@/lib/constants';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Event } from '@/types/event';
 import { db } from '@/lib/storage/db';
+import { Member } from '@/types/member';
 
 interface AttendeeFormProps {
   eventId: number;
@@ -20,6 +21,9 @@ interface AttendeeFormProps {
 }
 
 export default function AttendeeForm({ eventId, event, onClose, onSubmit, initialData, title }: AttendeeFormProps) {
+  const [suggestions, setSuggestions] = useState<Member[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -57,6 +61,43 @@ export default function AttendeeForm({ eventId, event, onClose, onSubmit, initia
 
   const ordeal = watch('ordeal');
   const brotherhood = watch('brotherhood');
+  const firstName = watch('firstName');
+  const lastName = watch('lastName');
+
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      // Only suggest if we're adding a NEW attendee (not editing an existing one with data)
+      // Check for firstName/lastName in initialData as a proxy for "editing"
+      if (initialData?.firstName || initialData?.lastName) return;
+
+      if ((firstName && firstName.length > 1) || (lastName && lastName.length > 1)) {
+        const results = await db.members.toArray();
+        const filtered = results.filter(a => {
+          if (!a.isActive) return false;
+          const matches = (firstName && a.firstName.toLowerCase().startsWith(firstName.toLowerCase())) ||
+                        (lastName && a.lastName.toLowerCase().startsWith(lastName.toLowerCase()));
+          return matches;
+        }).slice(0, 5);
+
+        setSuggestions(filtered);
+        setShowSuggestions(filtered.length > 0);
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    };
+
+    fetchSuggestions();
+  }, [firstName, lastName, initialData]);
+
+  const selectSuggestion = (a: Member) => {
+    setValue('firstName', a.firstName);
+    setValue('lastName', a.lastName);
+    setValue('middleName', a.middleName || '');
+    setValue('memberId', a.memberId || '');
+    setValue('role', a.role || '');
+    setShowSuggestions(false);
+  };
 
   // Mutual exclusivity for Ordeal and Brotherhood
   useEffect(() => {
@@ -128,9 +169,34 @@ export default function AttendeeForm({ eventId, event, onClose, onSubmit, initia
               <span>Personal Information</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
+              <div className="relative">
                 <label htmlFor="firstName" className={labelClass}>First Name *</label>
-                <input id="firstName" {...register('firstName')} className={cn(inputClass, errors.firstName && "border-red-500 bg-red-50")} />
+                <input
+                  id="firstName"
+                  {...register('firstName')}
+                  autoComplete="off"
+                  className={cn(inputClass, errors.firstName && "border-red-500 bg-red-50")}
+                  onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+                />
+
+                {showSuggestions && (
+                  <div className="absolute z-10 left-0 right-0 mt-1 bg-white border-2 border-gray-100 rounded-xl shadow-xl overflow-hidden">
+                    {suggestions.map((a) => (
+                      <button
+                        key={a.id}
+                        type="button"
+                        onClick={() => selectSuggestion(a)}
+                        className="w-full text-left px-4 py-3 hover:bg-khaki/30 border-b border-gray-50 last:border-0 transition-colors flex justify-between items-center"
+                      >
+                        <div>
+                          <div className="font-bold text-gray-900">{a.firstName} {a.lastName}</div>
+                          <div className="text-[10px] text-gray-500 uppercase font-black">{a.memberId}</div>
+                        </div>
+                        <div className="text-[10px] bg-scout-green/10 text-scout-green px-2 py-1 rounded-full font-black uppercase">Recent</div>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
               <div>
                 <label htmlFor="middleName" className={labelClass}>Middle Name</label>
@@ -138,7 +204,13 @@ export default function AttendeeForm({ eventId, event, onClose, onSubmit, initia
               </div>
               <div>
                 <label htmlFor="lastName" className={labelClass}>Last Name *</label>
-                <input id="lastName" {...register('lastName')} className={cn(inputClass, errors.lastName && "border-red-500 bg-red-50")} />
+                <input
+                  id="lastName"
+                  {...register('lastName')}
+                  autoComplete="off"
+                  className={cn(inputClass, errors.lastName && "border-red-500 bg-red-50")}
+                  onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+                />
               </div>
               <div>
                 <label htmlFor="memberId" className={labelClass}>Member ID *</label>
