@@ -1,11 +1,12 @@
 import { Attendee } from '@/types/attendee';
+import { Event } from '@/types/event';
 import Papa from 'papaparse';
 
 /**
  * Parses Black Pug CSV data.
  * Attempts to map all extended fields.
  */
-export function parseBlackPugCSV(csvContent: string, eventId: number): Attendee[] {
+export function parseBlackPugCSV(csvContent: string, eventId: number, event?: Event): Attendee[] {
   const results = Papa.parse(csvContent, {
     header: true,
     skipEmptyLines: true,
@@ -71,6 +72,8 @@ export function parseBlackPugCSV(csvContent: string, eventId: number): Attendee[
         isWalkIn: false,
         isImported: true,
         role: mapping.role ? row[mapping.role]?.trim() : undefined,
+        checkInDate: event?.startDate,
+        checkOutDate: event?.endDate,
         paidAmount: mapping.paidAmount ? parseFloat(String(row[mapping.paidAmount]).replace(/[^0-9.-]+/g, "")) || 0 : 0,
         receiptNumber: mapping.receiptNumber ? row[mapping.receiptNumber]?.trim() : undefined,
         paymentMethod: mapping.paymentMethod ? row[mapping.paymentMethod]?.trim() : undefined,
@@ -81,6 +84,7 @@ export function parseBlackPugCSV(csvContent: string, eventId: number): Attendee[
         ordeal: mapping.ordeal ? parseBool(row[mapping.ordeal]) : false,
         brotherhood: mapping.brotherhood ? parseBool(row[mapping.brotherhood]) : false,
         healthForm: mapping.healthForm ? parseBool(row[mapping.healthForm]) : false,
+        isActive: true,
       });
     }
   }

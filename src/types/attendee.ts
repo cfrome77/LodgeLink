@@ -11,6 +11,7 @@ export interface Attendee {
   notes?: string;
   isWalkIn: boolean;
   isImported: boolean;
+  isActive?: boolean;
 
   // New Fields
   role?: string;

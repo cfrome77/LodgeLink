@@ -2,7 +2,7 @@
 
 import { Event } from '@/types/event';
 import { format } from 'date-fns';
-import { Calendar, MapPin, ArrowLeft, Settings } from 'lucide-react';
+import { Calendar, MapPin, ArrowLeft, Settings, Lock, Unlock } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import EventForm from './EventForm';
@@ -30,6 +30,14 @@ export default function EventHeader({ event, totalAttendees }: EventHeaderProps)
     }
   };
 
+  const handleToggleLock = async () => {
+    try {
+      await db.events.update(event.id!, { isLocked: !event.isLocked });
+    } catch (error) {
+      console.error('Failed to toggle lock:', error);
+    }
+  };
+
   return (
     <>
       <header className="bg-background/80 backdrop-blur-md border-b border-border sticky top-0 z-40 px-4 py-4 sm:py-6">
@@ -48,16 +56,35 @@ export default function EventHeader({ event, totalAttendees }: EventHeaderProps)
                 </h1>
                 <button
                   onClick={() => setIsEditing(true)}
-                className="p-2 text-muted hover:text-scout-green hover:bg-surface rounded-lg transition-all"
+                  className="p-2 text-muted hover:text-scout-green hover:bg-surface rounded-lg transition-all"
                   title="Edit Event"
                 >
-                <Settings size={20} />
+                  <Settings size={20} />
+                </button>
+                <button
+                  onClick={handleToggleLock}
+                  className={`p-2 rounded-lg transition-all ${
+                    event.isLocked
+                      ? 'text-oa-red bg-oa-red/5 hover:bg-oa-red/10'
+                      : 'text-muted hover:text-scout-green hover:bg-surface'
+                  }`}
+                  title={event.isLocked ? "Unlock Event" : "Lock Event"}
+                >
+                  {event.isLocked ? <Lock size={20} /> : <Unlock size={20} />}
                 </button>
               </div>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm font-bold text-muted">
                 <div className="flex items-center gap-1">
                 <Calendar size={14} className="text-scout-green" />
-                  <span>{format(new Date(event.date), 'MMM d, yyyy')}</span>
+                  <span>
+                    {event.startDate && event.endDate ? (
+                      <>
+                        {format(new Date(event.startDate + 'T00:00:00'), 'MMM d, yyyy')} - {format(new Date(event.endDate + 'T00:00:00'), 'MMM d, yyyy')}
+                      </>
+                    ) : (
+                      'No date set'
+                    )}
+                  </span>
                 </div>
                 {event.chapter && (
                   <div className="flex items-center gap-1">

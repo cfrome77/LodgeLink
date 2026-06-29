@@ -2,9 +2,18 @@ import * as XLSX from 'xlsx';
 import { Attendee } from '@/types/attendee';
 import { Event } from '@/types/event';
 import { ExportColumn } from './presets';
+import { format, parseISO, isValid } from 'date-fns';
 
 function formatValue(key: string, value: string | number | boolean | undefined | null): string | number {
   if (value === undefined || value === null) return '';
+
+  if (typeof value === 'string' && (key.toLowerCase().includes('date') || key.toLowerCase().includes('time'))) {
+    // Attempt to format as US Date MM-DD-YYYY
+    const d = parseISO(value);
+    if (isValid(d)) {
+      return format(d, 'MM-dd-yyyy');
+    }
+  }
 
   if (typeof value === 'boolean') {
     // If it's Ordeal, Brotherhood, Health Form, or Paid in Full,
@@ -37,7 +46,7 @@ function prepareExportData(event: Event, attendees: Attendee[], columns: ExportC
       } else if (col.key === 'eventName') {
         value = event.name;
       } else if (col.key === 'eventDate') {
-        value = event.date;
+        value = event.startDate || '';
       } else {
         value = a[col.key as keyof Attendee];
       }
