@@ -76,16 +76,16 @@ export default function MembersPage() {
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-6xl">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-8 text-center md:text-left">
         <div>
           <h1 className="text-3xl font-black text-foreground tracking-tight uppercase">Master Member List</h1>
           <p className="text-muted font-bold">Shared directory for all events</p>
         </div>
-        <div className="flex gap-3 w-full md:w-auto">
+        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
           <button
             onClick={handleSyncFromEvents}
             disabled={isSyncing}
-            className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-surface border-2 border-border hover:border-scout-green text-muted hover:text-scout-green px-6 py-3 rounded-xl font-black transition-all uppercase tracking-widest text-xs"
+            className="flex items-center justify-center gap-2 bg-surface border-2 border-border hover:border-scout-green text-muted hover:text-scout-green px-6 py-3 rounded-xl font-black transition-all uppercase tracking-widest text-xs"
             title="Import members from previous event data"
           >
             <RefreshCw size={18} className={isSyncing ? 'animate-spin' : ''} />
@@ -93,7 +93,7 @@ export default function MembersPage() {
           </button>
           <button
             onClick={() => setIsAdding(true)}
-            className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-scout-green hover:bg-scout-green-hover text-white px-8 py-3 rounded-xl font-black transition-all shadow-md active:scale-95 uppercase tracking-widest text-xs"
+            className="flex items-center justify-center gap-2 bg-scout-green hover:bg-scout-green-hover text-white px-8 py-3 rounded-xl font-black transition-all shadow-md active:scale-95 uppercase tracking-widest text-xs"
           >
             <UserPlus size={18} />
             <span>Add Member</span>

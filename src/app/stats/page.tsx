@@ -22,12 +22,12 @@ export default function StatsPage() {
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-6xl">
-      <div className="mb-8">
+      <div className="mb-8 flex flex-col items-center text-center md:items-start md:text-left">
         <h1 className="text-3xl font-black text-foreground tracking-tight uppercase flex items-center gap-3">
           <BarChart3 className="text-scout-green" size={32} />
           <span>Global Statistics</span>
         </h1>
-        <p className="text-muted font-bold uppercase tracking-widest text-xs mt-1">Aggregated insights across all events</p>
+        <p className="text-muted font-bold uppercase tracking-widest text-[10px] sm:text-xs mt-1">Aggregated insights across all events</p>
       </div>
 
       <GlobalStats />
