@@ -36,7 +36,7 @@ export default function GlobalStats() {
   if (!stats) return null;
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-12">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 mb-12">
       {stats.map((s) => (
         <div key={s.label} className="bg-surface border-2 border-border p-5 rounded-3xl transition-all hover:shadow-md">
           <div className={`w-10 h-10 ${s.bg} ${s.color} rounded-xl flex items-center justify-center mb-3`}>

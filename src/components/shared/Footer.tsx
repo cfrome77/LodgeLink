@@ -6,10 +6,10 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-surface border-t border-border py-12 px-4 mt-auto">
+    <footer className="bg-surface border-t border-border py-12 px-4 mt-auto text-center md:text-left">
       <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          <div className="col-span-1 md:col-span-2">
+          <div className="col-span-1 md:col-span-2 flex flex-col items-center md:items-start">
             <Link href="/" className="flex items-center gap-2 mb-4">
               <Image
                 src="/lodgelink-logo-horizontal.png"

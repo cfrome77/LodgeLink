@@ -13,8 +13,8 @@ export default function Home() {
   return (
     <div className="container mx-auto py-8 px-4">
       {/* Header section with Logo + Contextual Greeting */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6">
-        <div className="flex items-center gap-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6 text-center md:text-left">
+        <div className="flex flex-col md:flex-row items-center gap-6">
           <Image
             src="/lodgelink-logo-vertical.png"
             alt="LodgeLink Logo"
@@ -24,7 +24,7 @@ export default function Home() {
             priority
           />
           {/* Greeting fills the space and adds professional polish */}
-          <div className="border-l border-border pl-6">
+          <div className="border-t md:border-t-0 md:border-l border-border pt-4 md:pt-0 md:pl-6">
             <h2 className="text-xl font-black text-foreground">Dashboard</h2>
             <p className="text-sm text-muted font-medium">
               Manage your lodge events and track your progress.

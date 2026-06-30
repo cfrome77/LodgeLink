@@ -49,7 +49,7 @@ export default function EventHeader({ event, totalAttendees }: EventHeaderProps)
             >
               <ArrowLeft size={24} />
             </Link>
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 flex flex-col items-center sm:items-start text-center sm:text-left">
               <div className="flex items-center gap-2">
                 <h1 className="text-xl sm:text-2xl font-black text-foreground truncate tracking-tight uppercase">
                   {event.name}
@@ -73,10 +73,10 @@ export default function EventHeader({ event, totalAttendees }: EventHeaderProps)
                   {event.isLocked ? <Lock size={20} /> : <Unlock size={20} />}
                 </button>
               </div>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm font-bold text-muted">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-1 text-[10px] sm:text-sm font-bold text-muted">
                 <div className="flex items-center gap-1">
-                <Calendar size={14} className="text-scout-green" />
-                  <span>
+                  <Calendar size={14} className="text-scout-green shrink-0" />
+                  <span className="whitespace-nowrap">
                     {event.startDate && event.endDate ? (
                       <>
                         {format(new Date(event.startDate + 'T00:00:00'), 'MMM d, yyyy')} - {format(new Date(event.endDate + 'T00:00:00'), 'MMM d, yyyy')}
@@ -88,11 +88,11 @@ export default function EventHeader({ event, totalAttendees }: EventHeaderProps)
                 </div>
                 {event.chapter && (
                   <div className="flex items-center gap-1">
-                  <MapPin size={14} className="text-scout-green" />
-                    <span>{event.chapter}</span>
+                    <MapPin size={14} className="text-scout-green shrink-0" />
+                    <span className="truncate">{event.chapter}</span>
                   </div>
                 )}
-              <div className="bg-khaki text-scout-green-dark px-2 py-0.5 rounded-full text-[10px] uppercase font-black tracking-widest border border-khaki-dark/20">
+                <div className="bg-khaki text-scout-green-dark px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] uppercase font-black tracking-widest border border-khaki-dark/20 whitespace-nowrap">
                   {totalAttendees} Total
                 </div>
               </div>

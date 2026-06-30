@@ -4,7 +4,7 @@ export default function ContactPage() {
   return (
     <div className="container mx-auto py-16 px-4 max-w-5xl">
       <div className="grid lg:grid-cols-3 gap-12">
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 flex flex-col items-center text-center lg:items-start lg:text-left">
           <h1 className="text-4xl font-black text-foreground uppercase tracking-tight mb-6">Contact Us</h1>
           <p className="text-lg text-muted font-bold mb-8">
             Have questions or need assistance? We're here to help the Order of the Arrow community.
