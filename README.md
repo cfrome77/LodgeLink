@@ -1,6 +1,6 @@
-# LodgeMaster Companion 🧭
+# LodgeLink - A LodgeMaster Companion 🧭
 
-LodgeMaster Companion is a mobile-first, offline-ready web application designed for chapter officers to prepare, clean, and export event attendance data for LodgeMaster import.
+LodgeLink is a mobile-first, offline-ready web application designed for chapter officers to prepare, clean, and export event attendance data for LodgeMaster import.
 
 It serves as a bridge between messy on-site registration (including Black Pug imports) and the structured import requirements of LodgeMaster.
 

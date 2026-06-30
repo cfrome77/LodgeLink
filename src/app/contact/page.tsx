@@ -49,7 +49,7 @@ export default function ContactPage() {
 
             <div className="grid md:grid-cols-2 gap-6 mb-8">
               <a
-                href="mailto:support@lodgemastercompanion.example.com?subject=Bug Report - LodgeMaster Companion"
+                href="mailto:support@lodgemastercompanion.example.com?subject=Bug Report - LodgeLink"
                 className="p-6 bg-background border border-border rounded-2xl hover:border-scout-green transition-colors group cursor-pointer"
               >
                 <Bug className="text-scout-green mb-4 group-hover:scale-110 transition-transform" size={32} />
@@ -57,7 +57,7 @@ export default function ContactPage() {
                 <p className="text-sm text-muted font-bold">Found an issue with check-ins or exports? Let us know.</p>
               </a>
               <a
-                href="mailto:support@lodgemastercompanion.example.com?subject=Feature Request - LodgeMaster Companion"
+                href="mailto:support@lodgemastercompanion.example.com?subject=Feature Request - LodgeLink"
                 className="p-6 bg-background border border-border rounded-2xl hover:border-scout-green transition-colors group cursor-pointer"
               >
                 <HelpCircle className="text-scout-green mb-4 group-hover:scale-110 transition-transform" size={32} />
@@ -65,12 +65,12 @@ export default function ContactPage() {
                 <p className="text-sm text-muted font-bold">Have an idea to make the companion even better?</p>
               </a>
               <a
-                href="mailto:support@lodgemastercompanion.example.com?subject=General Support - LodgeMaster Companion"
+                href="mailto:support@lodgemastercompanion.example.com?subject=General Support - LodgeLink"
                 className="p-6 bg-background border border-border rounded-2xl hover:border-scout-green transition-colors group cursor-pointer md:col-span-2"
               >
                 <MessageSquare className="text-scout-green mb-4 group-hover:scale-110 transition-transform" size={32} />
                 <h3 className="font-black text-foreground uppercase tracking-wider mb-2">General Support</h3>
-                <p className="text-sm text-muted font-bold">Need help with setup, ingestion, or LodgeMaster reporting?</p>
+                <p className="text-sm text-muted font-bold">Need help with setup, ingestion, or LodgeLink reporting?</p>
               </a>
             </div>
 

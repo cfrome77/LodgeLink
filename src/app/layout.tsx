@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LodgeMaster Companion",
+  title: "LodgeLink",
   description: "Tool to turn messy event attendance data into clean LodgeMaster import files.",
 };
 

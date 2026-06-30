@@ -1,155 +1,158 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Compass, Menu, X, Facebook, Twitter, Instagram, Sun, Moon } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import Image from "next/image";
+import Link from "next/link";
+import { Menu, X, Facebook, Twitter, Instagram, Sun, Moon } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
-    // Initialize theme state from document class
-    const isDark = document.documentElement.classList.contains('dark');
-    setTheme(isDark ? 'dark' : 'light');
+    const isDark = document.documentElement.classList.contains("dark");
+    setTheme(isDark ? "dark" : "light");
   }, []);
 
   const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
+    const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
-    if (newTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
+    if (newTheme === "dark") {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
     } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
     }
   };
 
   return (
-    <nav className="bg-background border-b border-border relative z-30">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="bg-scout-green p-1.5 rounded-lg text-white shrink-0">
-                <Compass size={24} />
-              </div>
-              <span className="text-xl font-black tracking-tight text-foreground">
-                LodgeMaster <span className="text-scout-green">Companion</span>
-              </span>
-            </Link>
+    <nav className="bg-background border-b border-border z-30">
+      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+        {/* LEFT: Logo */}
+        <div className="flex items-center shrink-0">
+          <Link href="/">
+            <Image
+              src="/lodgelink-logo-horizontal.png"
+              alt="LodgeLink"
+              width={120}
+              height={34}
+              priority
+            />
+          </Link>
+        </div>
 
-            <div className="hidden sm:flex sm:items-center sm:gap-6">
-              <Link href="/" className="text-sm font-bold text-muted hover:text-scout-green transition-colors">Events</Link>
-              <Link href="/members" className="text-sm font-bold text-muted hover:text-scout-green transition-colors">Master List</Link>
-              <Link href="/stats" className="text-sm font-bold text-muted hover:text-scout-green transition-colors">Stats</Link>
-              <Link href="/about" className="text-sm font-bold text-muted hover:text-scout-green transition-colors">About</Link>
-              <Link href="/contact" className="text-sm font-bold text-muted hover:text-scout-green transition-colors">Contact</Link>
-            </div>
+        {/* RIGHT: Links, Socials, Toggle, and Button */}
+        <div className="flex items-center gap-4 lg:gap-6">
+          {/* Main Links - Changed 'md' to 'lg' */}
+          <div className="hidden lg:flex items-center gap-6">
+            <Link
+              href="/"
+              className="text-sm font-bold text-muted hover:text-scout-green transition-colors"
+            >
+              Events
+            </Link>
+            <Link
+              href="/members"
+              className="text-sm font-bold text-muted hover:text-scout-green transition-colors"
+            >
+              Master List
+            </Link>
+            <Link
+              href="/stats"
+              className="text-sm font-bold text-muted hover:text-scout-green transition-colors"
+            >
+              Stats
+            </Link>
+            <Link
+              href="/contact"
+              className="text-sm font-bold text-muted hover:text-scout-green transition-colors"
+            >
+              Contact
+            </Link>
           </div>
 
-          <div className="hidden sm:flex sm:items-center sm:gap-4">
-            <div className="flex items-center gap-4 mr-2 border-r border-border pr-4">
-              <a href="#" className="text-muted hover:text-scout-green transition-colors" title="Facebook">
-                <Facebook size={18} />
-              </a>
-              <a href="#" className="text-muted hover:text-scout-green transition-colors" title="Twitter">
-                <Twitter size={18} />
-              </a>
-              <a href="#" className="text-muted hover:text-scout-green transition-colors" title="Instagram">
-                <Instagram size={18} />
-              </a>
-            </div>
+          {/* Socials - Changed 'lg' visibility to keep them visible longer (only hidden at < 1024px) */}
+          <div className="hidden lg:flex items-center gap-3">
+            <a href="#" className="text-muted hover:text-scout-green">
+              <Facebook size={16} />
+            </a>
+            <a href="#" className="text-muted hover:text-scout-green">
+              <Twitter size={16} />
+            </a>
+            <a href="#" className="text-muted hover:text-scout-green">
+              <Instagram size={16} />
+            </a>
+          </div>
 
+          {/* Utilities: Theme Toggle & Button with Separator */}
+          <div className="flex items-center gap-4 border-l border-border pl-4">
             <button
               onClick={toggleTheme}
-              className="p-2 text-muted hover:text-scout-green hover:bg-surface rounded-lg transition-all mr-2"
-              title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+              className="text-muted hover:text-scout-green transition-colors"
             >
-              {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+              {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
             </button>
-
-            <Link href="/events/new" className="bg-khaki text-scout-green-dark px-4 py-2 rounded-lg text-sm font-bold hover:bg-khaki-dark transition-colors border border-khaki-dark/20">
+            <Link
+              href="/events/new"
+              className="bg-khaki text-scout-green-dark px-4 py-2 rounded-lg text-sm font-bold hover:bg-khaki-dark transition-all border border-khaki-dark/20 whitespace-nowrap shadow-sm"
+            >
               New Event
             </Link>
           </div>
 
-          <div className="flex items-center sm:hidden gap-2">
-            <button
-              onClick={toggleTheme}
-              className="p-2 text-muted hover:text-scout-green hover:bg-surface rounded-lg transition-all"
-            >
-              {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-            </button>
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-muted hover:text-foreground focus:outline-none p-2"
-            >
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
+          {/* Mobile Menu Toggle - Changed 'md' to 'lg' */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="lg:hidden p-2 text-muted hover:text-foreground"
+          >
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
       </div>
 
-      {/* Mobile menu */}
+      {/* MOBILE MENU - Changed 'md' to 'lg' */}
       {isOpen && (
-        <div className="sm:hidden bg-background border-b border-border animate-in slide-in-from-top-4 duration-200">
-          <div className="px-2 pt-2 pb-3 space-y-1">
+        <div className="lg:hidden border-t border-border bg-background p-4 animate-in slide-in-from-top-2">
+          <div className="flex flex-col gap-4">
             <Link
               href="/"
               onClick={() => setIsOpen(false)}
-              className="block px-3 py-4 text-base font-bold text-foreground hover:bg-surface rounded-md"
+              className="text-base font-bold text-foreground"
             >
               Events
             </Link>
             <Link
               href="/members"
               onClick={() => setIsOpen(false)}
-              className="block px-3 py-4 text-base font-bold text-foreground hover:bg-surface rounded-md"
+              className="text-base font-bold text-foreground"
             >
               Master List
             </Link>
             <Link
               href="/stats"
               onClick={() => setIsOpen(false)}
-              className="block px-3 py-4 text-base font-bold text-foreground hover:bg-surface rounded-md"
+              className="text-base font-bold text-foreground"
             >
               Stats
             </Link>
             <Link
-              href="/about"
-              onClick={() => setIsOpen(false)}
-              className="block px-3 py-4 text-base font-bold text-foreground hover:bg-surface rounded-md"
-            >
-              About
-            </Link>
-            <Link
               href="/contact"
               onClick={() => setIsOpen(false)}
-              className="block px-3 py-4 text-base font-bold text-foreground hover:bg-surface rounded-md"
+              className="text-base font-bold text-foreground"
             >
               Contact
             </Link>
-            <Link
-              href="/events/new"
-              onClick={() => setIsOpen(false)}
-              className="block px-3 py-4 text-base font-bold text-scout-green hover:bg-khaki rounded-md"
-            >
-              New Event
-            </Link>
-            <div className="flex items-center justify-between px-3 py-4 border-t border-border mt-2">
-              <div className="flex items-center gap-6">
-                <a href="#" className="text-muted hover:text-scout-green transition-colors">
-                  <Facebook size={20} />
-                </a>
-                <a href="#" className="text-muted hover:text-scout-green transition-colors">
-                  <Twitter size={20} />
-                </a>
-                <a href="#" className="text-muted hover:text-scout-green transition-colors">
-                  <Instagram size={20} />
-                </a>
-              </div>
+            <div className="flex gap-6 pt-4 border-t border-border">
+              <a href="#" className="text-muted hover:text-scout-green">
+                <Facebook size={20} />
+              </a>
+              <a href="#" className="text-muted hover:text-scout-green">
+                <Twitter size={20} />
+              </a>
+              <a href="#" className="text-muted hover:text-scout-green">
+                <Instagram size={20} />
+              </a>
             </div>
           </div>
         </div>
