@@ -1,6 +1,6 @@
 "use client";
 
-import { Compass, Facebook, Twitter, Instagram, Mail } from "lucide-react";
+import { Facebook, Twitter, Instagram, Mail } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -119,8 +119,7 @@ export default function Footer() {
 
         <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted font-bold uppercase tracking-wider">
           <p>
-            © {new Date().getFullYear()} LodgeLink. Not an official Boy Scouts
-            of America product.
+            © {new Date().getFullYear()} LodgeLink. Not an offical product of Scouting America.
           </p>
           <div className="flex gap-6">
             <Link
