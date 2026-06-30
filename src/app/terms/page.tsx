@@ -12,7 +12,7 @@ export default function TermsPage() {
             <h2 className="text-2xl font-black uppercase tracking-tight m-0">1. Agreement to Terms</h2>
           </div>
           <p className="text-muted font-medium">
-            By accessing or using LodgeMaster Companion, you agree to be bound by these Terms of Service. If you do not agree to all of these terms, do not use the application. This tool is provided for free to the scouting community.
+            By accessing or using LodgeLink, you agree to be bound by these Terms of Service. If you do not agree to all of these terms, do not use the application. This tool is provided for free to the scouting community.
           </p>
         </section>
 
@@ -37,7 +37,7 @@ export default function TermsPage() {
             <h2 className="text-2xl font-black uppercase tracking-tight m-0">3. Disclaimer of Warranties</h2>
           </div>
           <p className="text-muted font-medium italic bg-surface p-6 rounded-2xl border-2 border-border">
-            "LodgeMaster Companion is provided 'as is' and 'as available' without any warranties of any kind, either express or implied. We do not guarantee that the application will be error-free or that the data exported will be perfectly compatible with all versions of LodgeMaster."
+            "LodgeLink is provided 'as is' and 'as available' without any warranties of any kind, either express or implied. We do not guarantee that the application will be error-free or that the data exported will be perfectly compatible with all versions of LodgeMaster."
           </p>
         </section>
 
@@ -47,7 +47,7 @@ export default function TermsPage() {
             <h2 className="text-2xl font-black uppercase tracking-tight m-0">4. Limitation of Liability</h2>
           </div>
           <p className="text-muted font-medium">
-            In no event shall the volunteer developers or Section NE-1 be liable for any damages (including, without limitation, damages for loss of data or profit) arising out of the use or inability to use the materials on LodgeMaster Companion.
+            In no event shall the volunteer developers or Section NE-1 be liable for any damages (including, without limitation, damages for loss of data or profit) arising out of the use or inability to use the materials on LodgeLink.
           </p>
         </section>
 

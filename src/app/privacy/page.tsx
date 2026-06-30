@@ -12,7 +12,7 @@ export default function PrivacyPage() {
         <div>
           <h2 className="text-2xl font-black text-foreground uppercase tracking-tight mb-2">Our Privacy Promise</h2>
           <p className="text-muted font-bold text-lg">
-            LodgeMaster Companion was designed from the ground up to respect the privacy of scouts and scouters. Your data never leaves your device.
+            LodgeLink was designed from the ground up to respect the privacy of scouts and scouters. Your data never leaves your device.
           </p>
         </div>
       </div>
@@ -63,7 +63,7 @@ export default function PrivacyPage() {
         <section className="bg-surface border-2 border-border rounded-2xl p-6">
           <h2 className="text-xl font-black uppercase tracking-tight mb-4">How to Clear Data</h2>
           <p className="text-sm text-muted font-bold mb-4">
-            To completely remove all data from LodgeMaster Companion:
+            To completely remove all data from LodgeLink:
           </p>
           <ol className="text-sm text-muted font-bold space-y-2 list-decimal pl-4">
             <li>Open your browser settings</li>

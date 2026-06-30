@@ -11,7 +11,7 @@ export default function CookiesPage() {
           <div>
             <h2 className="text-2xl font-black uppercase tracking-tight m-0 mb-2">How we use storage</h2>
             <p className="text-muted font-bold m-0">
-              LodgeMaster Companion does not use traditional tracking cookies. Instead, we use modern browser storage technologies to provide a fast, offline-capable experience.
+              LodgeLink does not use traditional tracking cookies. Instead, we use modern browser storage technologies to provide a fast, offline-capable experience.
             </p>
           </div>
         </div>

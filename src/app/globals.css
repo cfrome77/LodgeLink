@@ -82,21 +82,45 @@
 html,
 body {
   height: 100%;
+  /* Prevents horizontal shifts during transitions */
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
   padding: 0;
-
   background-color: var(--color-background);
   color: var(--color-foreground);
-
   font-family: var(--font-sans, Arial, Helvetica, sans-serif);
-
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
 
-  transition: background-color 0.3s ease, color 0.3s ease;
+/* =========================
+   UTILITIES & ANIMATIONS
+========================= */
+@layer utilities {
+  .animate-in {
+    animation: fadeIn 0.2s ease-in-out;
+  }
+
+  .pb-safe-area {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* =========================
@@ -107,29 +131,20 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: var(--surface-muted);
+  background: var(--color-surface-muted);
   border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: var(--color-border);
   border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--muted);
+  background: var(--color-muted);
 }
 
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: var(--border) var(--surface-muted);
-}
-
-/* =========================
-   SAFE AREA UTILITY
-========================= */
-@layer utilities {
-  .pb-safe-area {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
+  scrollbar-color: var(--color-border) var(--color-surface-muted);
 }
