@@ -1,0 +1,85 @@
+name: "Validate Code & Publish Desktop Release"
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+
+# Cancels in-progress builds if a new commit is pushed to the same branch/tag
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-code:
+    name: "Lint, Test & Scan"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install Frontend Dependencies
+        run: npm ci
+
+      - name: Check for Known Vulnerabilities
+        run: npm audit --audit-level=high
+
+      - name: Run ESLint and TypeScript Verification
+        run: npm run lint
+
+      - name: Run Unit/Integration Tests
+        run: npm run test
+
+  publish-tauri:
+    name: "Build and Release Desktop Binaries"
+    needs: validate-code
+    # Only execute the build job when a tag is pushed
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [macos-latest, windows-latest, ubuntu-22.04]
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install Rust Stable
+        uses: dtolnay/rust-toolchain@stable
+
+      # Cache Rust build artifacts to significantly reduce build times
+      - name: Rust Cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Install Dependencies (Linux Only)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+
+      - name: Install Frontend Dependencies
+        run: npm ci
+
+      - name: Build and Publish to GitHub Releases
+        uses: tauri-apps/tauri-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: "LodgeLink Stable ${{ github.ref_name }}"
+          releaseBody: "Automated multi-platform release. Verified against tests, ESLint, and dependency security metrics."
