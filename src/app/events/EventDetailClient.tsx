@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/storage/db";
 import { useState } from "react";
@@ -26,27 +26,44 @@ import ExportModal from "@/components/event/ExportModal";
 type Tab = "checkin" | "attendees" | "import" | "reconciliation";
 
 export default function EventDetailClient() {
-  const params = useParams();
+  const searchParams = useSearchParams();
   const router = useRouter();
-  
-  // If the parameter is the string 'id' or fails to parse, 
-  // safely fall back to 0 or check if a dynamic router hasn't hydrated yet.
-  const eventId = isNaN(Number(params.eventId)) ? 0 : Number(params.eventId);
+
+  const eventId = Number(searchParams.get("id") ?? 0);
 
   const [activeTab, setActiveTab] = useState<Tab>("checkin");
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   const event = useLiveQuery(() => db.events.get(eventId), [eventId]);
+
   const attendees = useLiveQuery(
     () => db.attendees.where("eventId").equals(eventId).toArray(),
     [eventId],
   );
 
-  if (!event) {
+  // Dexie is still loading
+  if (event === undefined || attendees === undefined) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-scout-green mb-4"></div>
         <p className="text-gray-500">Loading event details...</p>
+      </div>
+    );
+  }
+
+  // Event doesn't exist
+  if (!event) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+        <h2 className="text-2xl font-black text-gray-900">Event not found</h2>
+        <p className="text-gray-500">The requested event could not be found.</p>
+
+        <button
+          onClick={() => router.push("/")}
+          className="bg-scout-green hover:bg-scout-green-dark text-white px-6 py-3 rounded-xl font-black transition-colors"
+        >
+          Return Home
+        </button>
       </div>
     );
   }
@@ -61,6 +78,7 @@ export default function EventDetailClient() {
         await db.attendees.where("eventId").equals(eventId).delete();
         await db.events.delete(eventId);
       });
+
       router.push("/");
     }
   };
@@ -74,7 +92,7 @@ export default function EventDetailClient() {
 
   return (
     <div className="min-h-screen bg-zinc-50 flex flex-col">
-      <EventHeader event={event} totalAttendees={attendees?.length || 0} />
+      <EventHeader event={event} totalAttendees={attendees.length} />
 
       <main className="container mx-auto px-4 py-6 flex-1">
         <div className="grid lg:grid-cols-12 gap-8 items-start">
@@ -102,7 +120,7 @@ export default function EventDetailClient() {
                 <CheckInMode
                   eventId={eventId}
                   event={event}
-                  attendees={attendees || []}
+                  attendees={attendees}
                 />
               )}
 
@@ -113,7 +131,8 @@ export default function EventDetailClient() {
                       Attendee List
                     </h2>
                   </div>
-                  <AttendeeList eventId={eventId} attendees={attendees || []} />
+
+                  <AttendeeList eventId={eventId} attendees={attendees} />
                 </div>
               )}
 
@@ -124,7 +143,7 @@ export default function EventDetailClient() {
               )}
 
               {activeTab === "reconciliation" && (
-                <ReconciliationView attendees={attendees || []} />
+                <ReconciliationView attendees={attendees} />
               )}
             </div>
           </div>
@@ -134,13 +153,15 @@ export default function EventDetailClient() {
               <h3 className="text-lg font-black text-gray-900 mb-6 uppercase tracking-wider text-center">
                 Summary
               </h3>
-              <ReconciliationPanel attendees={attendees || []} />
+
+              <ReconciliationPanel attendees={attendees} />
             </div>
 
             <div className="bg-white p-6 rounded-3xl border-2 border-gray-100 shadow-sm">
               <h3 className="text-lg font-black text-gray-900 mb-4 uppercase tracking-wider text-center">
                 Actions
               </h3>
+
               <div className="grid gap-3">
                 <button
                   onClick={() => setIsExportModalOpen(true)}
@@ -149,6 +170,7 @@ export default function EventDetailClient() {
                   <Download size={20} />
                   Export Data
                 </button>
+
                 <button
                   onClick={handleDeleteEvent}
                   className="flex items-center justify-center gap-2 border-2 border-red-100 hover:bg-red-50 text-red-600 px-6 py-4 rounded-xl font-black transition-all active:scale-95"
@@ -182,14 +204,12 @@ export default function EventDetailClient() {
         ))}
       </nav>
 
-      {event && attendees && (
-        <ExportModal
-          event={event}
-          attendees={attendees}
-          isOpen={isExportModalOpen}
-          onClose={() => setIsExportModalOpen(false)}
-        />
-      )}
+      <ExportModal
+        event={event}
+        attendees={attendees}
+        isOpen={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
+      />
     </div>
   );
 }
