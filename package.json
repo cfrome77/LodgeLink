@@ -1,12 +1,13 @@
 {
-  "name": "temp-app",
-  "version": "0.1.0",
+  "name": "LodgeLink",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "tauri": "tauri"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",

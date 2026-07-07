@@ -59,7 +59,7 @@ export default function Home() {
           events?.map((event) => (
             <Link
               key={event.id}
-              href={`/events/${event.id}`}
+              href={`/events?id=${event.id}`}
               className="group bg-surface border-2 border-border rounded-3xl p-8 hover:shadow-xl hover:border-scout-green/30 transition-all border-l-8 border-l-scout-green"
             >
               <div className="flex justify-between items-start mb-6">

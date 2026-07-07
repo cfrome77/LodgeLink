@@ -4,7 +4,7 @@ export default function AboutPage() {
   return (
     <div className="container mx-auto py-16 px-4 max-w-4xl">
       <div className="text-center mb-16">
-        <h1 className="text-5xl font-black text-foreground uppercase tracking-tight mb-4 italic">About LodgeMaster <span className="text-scout-green">Companion</span></h1>
+        <h1 className="text-5xl font-black text-foreground uppercase tracking-tight mb-4 italic">About LodgeLink</h1>
         <p className="text-xl text-muted font-bold max-w-2xl mx-auto">
           Streamlining event management for the Order of the Arrow, one check-in at a time.
         </p>

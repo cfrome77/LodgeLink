@@ -16,7 +16,18 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "LodgeLink",
-  description: "Tool to turn messy event attendance data into clean LodgeMaster import files.",
+  description:
+    "Tool to turn messy event attendance data into clean LodgeMaster import files.",
+  manifest: "/site.webmanifest",
+  icons: {
+    icon: [
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -49,9 +60,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
         <Navbar />
-        <main className="flex-1">
-          {children}
-        </main>
+        <main className="flex-1">{children}</main>
         <Footer />
       </body>
     </html>

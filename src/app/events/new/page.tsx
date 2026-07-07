@@ -16,7 +16,7 @@ export default function NewEventPage() {
     setIsSubmitting(true);
     try {
       const id = await db.events.add(data);
-      router.push(`/events/${id}`);
+      router.push(`/events?id=${id}`);
     } catch (error) {
       console.error('Failed to create event:', error);
       setIsSubmitting(false);
