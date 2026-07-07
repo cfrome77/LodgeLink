@@ -1,4 +1,5 @@
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 import { Attendee } from '@/types/attendee';
 import { Event } from '@/types/event';
 import { ExportColumn } from './presets';
@@ -58,27 +59,52 @@ function prepareExportData(event: Event, attendees: Attendee[], columns: ExportC
   });
 }
 
-export function exportToExcel(event: Event, attendees: Attendee[], columns: ExportColumn[]) {
+export async function exportToExcel(event: Event, attendees: Attendee[], columns: ExportColumn[]) {
   const data = prepareExportData(event, attendees, columns);
-  const worksheet = XLSX.utils.json_to_sheet(data);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Attendees');
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Attendees');
 
-  XLSX.writeFile(workbook, `${event.name.replace(/\s+/g, '_')}_attendance.xlsx`);
+  if (data.length > 0) {
+    const headers = Object.keys(data[0]);
+    worksheet.columns = headers.map(header => ({
+      header,
+      key: header,
+    }));
+    worksheet.addRows(data);
+  }
+
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  saveAs(blob, `${event.name.replace(/\s+/g, '_')}_attendance.xlsx`);
+}
+
+function csvEscape(value: string | number | null | undefined): string {
+  if (value === null || value === undefined || value === '') {
+    return '';
+  }
+  const s = String(value);
+  if (/[",\n\r]/.test(s)) {
+    return `"${s.replace(/"/g, '""')}"`;
+  }
+  return s;
 }
 
 export function exportToCSV(event: Event, attendees: Attendee[], columns: ExportColumn[]) {
   const data = prepareExportData(event, attendees, columns);
-  const worksheet = XLSX.utils.json_to_sheet(data);
-  const csvOutput = XLSX.utils.sheet_to_csv(worksheet);
+  if (data.length === 0) return;
 
-  const blob = new Blob([csvOutput], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.setAttribute('href', url);
-  link.setAttribute('download', `${event.name.replace(/\s+/g, '_')}_backup.csv`);
-  link.style.visibility = 'hidden';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  const headers = Object.keys(data[0]);
+  const csvRows: string[] = [];
+
+  // Header row
+  csvRows.push(headers.map(csvEscape).join(','));
+
+  // Data rows
+  data.forEach(row => {
+    csvRows.push(headers.map(header => csvEscape(row[header])).join(','));
+  });
+
+  const csvContent = csvRows.join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  saveAs(blob, `${event.name.replace(/\s+/g, '_')}_backup.csv`);
 }
