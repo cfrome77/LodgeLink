@@ -28,6 +28,10 @@
     "zod": "^3.23.8",
     "zustand": "^5.0.2"
   },
+  "overrides": {
+    "uuid": "^14.0.1",
+    "postcss": "$postcss"
+  },
   "devDependencies": {
     "@eslint/compat": "^2.1.0",
     "@eslint/eslintrc": "^3.3.5",
@@ -40,7 +44,7 @@
     "@types/react-dom": "^19.0.2",
     "eslint": "^9.16.0",
     "eslint-config-next": "15.1.0",
-    "postcss": "^8.5.15",
+    "postcss": "^8.5.16",
     "tailwindcss": "^4.3.1",
     "typescript": "^5"
   }
