@@ -4,15 +4,13 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/storage/db';
 import { useState, useMemo } from 'react';
 import {
-  Users,
   Search,
   UserPlus,
   Edit2,
   Trash2,
   ShieldCheck,
   ShieldAlert,
-  RefreshCw,
-  AlertCircle
+  RefreshCw
 } from 'lucide-react';
 import MemberFormModal from '@/components/members/MemberFormModal';
 import { Member } from '@/types/member';

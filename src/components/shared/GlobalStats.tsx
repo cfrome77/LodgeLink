@@ -3,7 +3,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/storage/db';
 import {
-  BarChart3,
   Users,
   Calendar,
   CheckCircle2,
