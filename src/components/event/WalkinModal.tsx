@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { AttendeeSchema, AttendeeFormValues } from '@/lib/validation/schemas';
 import { X, Save, UserPlus } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
-import { Attendee } from '@/types/attendee';
 import { Member } from '@/types/member';
 import { Event as EventType } from '@/types/event';
 import { db } from '@/lib/storage/db';

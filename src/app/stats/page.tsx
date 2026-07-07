@@ -3,7 +3,7 @@
 import GlobalStats from '@/components/shared/GlobalStats';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/storage/db';
-import { BarChart3, TrendingUp, Users, Award, Clock } from 'lucide-react';
+import { BarChart3, TrendingUp, Users, Award } from 'lucide-react';
 import { useMemo } from 'react';
 
 export default function StatsPage() {
