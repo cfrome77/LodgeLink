@@ -1,10 +1,10 @@
 [package]
-name = "app"
+name = "lodgelink"
 version = "1.0.0"
-description = "A Tauri App"
-authors = ["you"]
-license = ""
-repository = ""
+description = "A modern application for managing lodge events, registrations, and attendee check-in."
+authors = ["Chris Frome <chris@chrisfrome.com>"]
+license = "MIT"
+repository = "https://github.com/cfrome77/LodgeLink"
 edition = "2021"
 rust-version = "1.77.2"
 
