@@ -85,5 +85,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tagName: ${{ github.ref_name }}
-          releaseName: "LodgeLink Stable ${{ github.ref_name }}"
-          releaseBody: "Automated multi-platform release. Verified against tests, ESLint, and security metrics."
+          releaseName: "LodgeLink ${{ github.ref_name }}"
+          releaseDraft: true
